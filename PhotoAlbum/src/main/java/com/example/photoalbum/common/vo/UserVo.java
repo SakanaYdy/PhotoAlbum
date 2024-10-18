@@ -20,13 +20,10 @@ public class UserVo implements Serializable {
      */
     @TableId(type = IdType.AUTO)
     private Integer id;
-
     /**
      * 
      */
     private String name;
-
-
     /**
      * 
      */
