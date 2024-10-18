@@ -21,6 +21,7 @@
   </template>
   
   <script>
+  import axios from 'axios';
   export default {
     data() {
       return {
@@ -31,17 +32,48 @@
       };
     },
     methods: {
+      // handleLogin() {
+      //   if (this.username && this.password) {
+
+
+      //     this.successMessage = '登录成功！';
+      //     this.errorMessage = '';
+      //     this.goToHome();
+      //     // 在这里可以进行后续操作，如发送请求到后端进行登录
+      //   } else {
+      //     this.errorMessage = '请填写所有字段';
+      //     this.successMessage = '';
+      //   }
+      // },
       handleLogin() {
         if (this.username && this.password) {
-          this.successMessage = '登录成功！';
-          this.errorMessage = '';
-          this.goToHome();
-          // 在这里可以进行后续操作，如发送请求到后端进行登录
+            const requestBody = {
+                name: this.username,
+                password: this.password,
+            };
+
+            axios.post('http://localhost:8085/user/login', requestBody)
+                .then((response) => {
+                    if (response.data.code === 1) {
+                        this.successMessage = '登录成功！';
+                        this.errorMessage = '';
+                        this.goToHome();
+                        // 处理成功后的数据，例如保存用户信息
+                    } else {
+                        this.errorMessage = response.data.msg || '登录失败';
+                        this.successMessage = '';
+                    }
+                })
+                .catch((error) => {
+                    this.errorMessage = '登录失败，请检查用户名和密码';
+                    this.successMessage = '';
+                    console.error(error);
+                });
         } else {
-          this.errorMessage = '请填写所有字段';
-          this.successMessage = '';
+            this.errorMessage = '请填写所有字段';
+            this.successMessage = '';
         }
-      },
+    },
       goToRegister() {
         // 跳转到注册页面的逻辑
         this.$router.push('/register'); // 假设你使用了 vue-router

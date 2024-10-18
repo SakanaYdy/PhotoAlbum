@@ -40,3 +40,6 @@ const router = createRouter({
 })
 
 export default router
+
+// 后端接口地址
+// http://localhost:8085/v3/api-docs/default
