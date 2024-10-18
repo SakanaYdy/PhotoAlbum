@@ -12,7 +12,7 @@
             @select="handleSelect"
             :ellipsis="false"
           >
-            <el-menu-item index="1">首页</el-menu-item>
+            <el-menu-item index="1" @click="toHome">首页</el-menu-item>
             <el-sub-menu index="2">
               <template #title>相册管理</template>
               <el-menu-item index="2-1">相册类别</el-menu-item>
@@ -26,63 +26,65 @@
               </el-sub-menu>
             </el-sub-menu>
             <!-- <el-menu-item index="3" disabled>Info</el-menu-item> -->
-            <el-menu-item index="4">个人相册</el-menu-item>
+            <el-menu-item index="4" @click="toPersonalAlbum">个人相册</el-menu-item>
             <el-menu-item index="5" push>
               <img src="https://photo-album-ydy.oss-cn-beijing.aliyuncs.com/avatar/OIP-C.jpg" width="20px"/>
               <div>YDY</div>
             </el-menu-item>
           </el-menu>
         </el-header>
-  
         <el-main>
-            <el-row :gutter="20">
-                <el-col :span="6"><div class="grid-content ep-bg-purple" />
-                    <el-card style="max-width: 300px">
-                        <template #header>美食</template>
-                        <img
-                        src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
+        <el-row :gutter="20">
+            <el-col v-for="album in albums" :key="album.id" :span="6">
+                <div class="grid-content ep-bg-purple"></div>
+                <el-card style="max-width: 300px">
+                    <template #header>{{ album.albumName }}</template>
+                    <img
+                        src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"  
                         style="width: 100%"
-                        />
-                    </el-card>
-                </el-col>
-                <el-col :span="6"><div class="grid-content ep-bg-purple" />
-                    <el-card style="max-width: 300px">
-                        <template #header>风景</template>
-                        <img
-                        src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-                        style="width: 100%"
-                        />
-                    </el-card>
-                </el-col>
-                <el-col :span="6"><div class="grid-content ep-bg-purple" />
-                    <el-card style="max-width: 300px">
-                        <template #header>人像</template>
-                        <img
-                        src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-                        style="width: 100%"
-                        />
-                    </el-card>
-                </el-col>
-                <el-col :span="6"><div class="grid-content ep-bg-purple" />
-                    <el-card style="max-width: 300px">
-                        <template #header>宠物</template>
-                        <img
-                        src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-                        style="width: 100%"
-                        />
-                    </el-card>
-                </el-col>
-            </el-row>
-
-        </el-main>
+                    />
+                </el-card>
+            </el-col>
+        </el-row>
+    </el-main>
       </el-container>
     </div>
   </template>
   
   <script>
+  import axios from 'axios';
   // @ is an alias to /src
   export default{
-    name: 'NavBar'
+    name: 'NavBar',
+    data() {
+        return {
+            albums: [],  // 存储从后端获取的相册数据
+        };
+    },
+    created() {
+        this.fetchAlbums();  // 组件创建时请求相册数据
+    },
+    methods: {
+        fetchAlbums() {
+          axios.post('http://localhost:8085/photo/getAll')
+                .then((response) => {
+                    if (response.data.code === 1) {
+                        this.albums = response.data.data;  // 从响应中提取数据
+                    } else {
+                        console.error('获取相册失败:', response.data.msg);  // 处理错误信息
+                    }
+                })
+                .catch((error) => {
+                    console.error('请求失败:', error);  // 处理请求错误
+                });
+        },
+        toPersonalAlbum(){
+          this.$router.push("/person");
+        },
+        toHome(){
+          this.$router.push("/home")
+        }
+    },
   }
   </script>
 

@@ -11,7 +11,7 @@
             active-text-color="#ffd04b"
             @select="handleSelect"
         >
-            <el-menu-item index="1">首页</el-menu-item>
+          <el-menu-item index="1" @click="toHome">首页</el-menu-item>
             <el-sub-menu index="2">
             <template #title>相册管理</template>
             <el-menu-item index="2-1">相册类别</el-menu-item>
@@ -100,7 +100,16 @@
         }
       ]
     };
-  }
+  },
+  methods: {
+        toPersonalAlbum(){
+          this.$router.push("/person");
+        },
+        toHome(){
+          this.$router.push("/home")
+        }
+    },
+
 }
 
   </script>

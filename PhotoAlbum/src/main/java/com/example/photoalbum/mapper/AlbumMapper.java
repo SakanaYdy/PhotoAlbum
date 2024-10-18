@@ -20,10 +20,10 @@ public interface AlbumMapper extends BaseMapper<Album> {
      * 新增相册操作
      * @param albumDto
      */
-    @Insert("insert into album (album_name, owner) values (#{albumName},#{owner})")
+    @Insert("insert into album (albumName, owner) values (#{albumName},#{owner})")
     void addAlbum(AlbumDto albumDto);
 
-    @Select("select * from album;")
+    @Select("select * from album")
     List<Album> getAll();
 
     @Select("select * from album where owner = #{username}")
