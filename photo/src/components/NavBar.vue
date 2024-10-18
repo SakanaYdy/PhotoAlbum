@@ -10,6 +10,7 @@
             text-color="#fff"
             active-text-color="#ffd04b"
             @select="handleSelect"
+            :ellipsis="false"
           >
             <el-menu-item index="1">首页</el-menu-item>
             <el-sub-menu index="2">
@@ -26,6 +27,10 @@
             </el-sub-menu>
             <!-- <el-menu-item index="3" disabled>Info</el-menu-item> -->
             <el-menu-item index="4">个人相册</el-menu-item>
+            <el-menu-item index="5" push>
+              <img src="https://photo-album-ydy.oss-cn-beijing.aliyuncs.com/avatar/OIP-C.jpg" width="20px"/>
+              <div>YDY</div>
+            </el-menu-item>
           </el-menu>
         </el-header>
   

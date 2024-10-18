@@ -26,6 +26,10 @@
             </el-sub-menu>
             <el-menu-item index="3">个人相册</el-menu-item>
             <el-menu-item index="4">登出</el-menu-item>
+            <el-menu-item index="5">
+              <el-icon><Bell />通知</el-icon>
+            </el-menu-item>
+            
         </el-menu>
         
         </el-header>

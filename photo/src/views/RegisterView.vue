@@ -18,7 +18,11 @@
           <label for="confirmPassword">确认密码:</label>
           <input type="password" id="confirmPassword" v-model="confirmPassword" required />
         </div>
-        <button type="submit">注册</button>
+        <div class="button-group">
+          <button type="submit" @click="backToLogin">返回登录</button>
+          <button type="button">注册</button>
+        </div>
+
       </form>
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
       <div v-if="successMessage" class="success">{{ successMessage }}</div>
@@ -47,12 +51,20 @@
           this.errorMessage = '';
           // 在这里可以进行后续操作，如发送请求到后端进行注册
         }
+      },
+      backToLogin(){
+        this.$router.push('/')
       }
     }
   };
   </script>
   
   <style scoped>
+
+.button-group {
+    display: flex;
+    justify-content: space-between; /* 两个按钮之间的空间 */
+  }
   .register-container {
     max-width: 300px;
     margin: 50px auto;

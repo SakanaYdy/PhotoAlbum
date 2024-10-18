@@ -4,8 +4,9 @@ import HomeView from '../views/HomeView.vue'
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'login',
+    // component: HomeView
+    component: () => import(/* webpackChunkName: "about" */ '../views/LoginView.vue')
   },
   {
     path: '/about',
@@ -16,9 +17,10 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   },
   {
-    path: '/login',
-    name: 'login',
-    component: () => import(/* webpackChunkName: "about" */ '../views/LoginView.vue')
+    path: '/home',
+    name: 'home',
+    // component: () => import(/* webpackChunkName: "about" */ '../views/LoginView.vue')
+    component: HomeView
   },
   {
     path: '/register',

@@ -3,8 +3,19 @@
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link>
   </nav> -->
+  <!-- <LoginView/> -->
   <router-view/>
 </template>
+
+
+<script>
+// import LoginView from './views/LoginView.vue';
+// export default{
+//   components:{
+//     LoginView
+//   }
+// }
+</script>
 
 <style>
 #app {

@@ -47,7 +47,7 @@
         this.$router.push('/register'); // 假设你使用了 vue-router
       },
       goToHome(){
-        this.$router.push('/');  // 跳转到主页
+        this.$router.push('/home');  // 跳转到主页
       }
 
     }
