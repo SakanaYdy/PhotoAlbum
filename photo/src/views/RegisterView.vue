@@ -6,10 +6,10 @@
           <label for="username">用户名:</label>
           <input type="text" id="username" v-model="username" required />
         </div>
-        <div class="form-group">
+        <!-- <div class="form-group">
           <label for="email">邮箱:</label>
           <input type="email" id="email" v-model="email" required />
-        </div>
+        </div> -->
         <div class="form-group">
           <label for="password">密码:</label>
           <input type="password" id="password" v-model="password" required />
@@ -20,7 +20,7 @@
         </div>
         <div class="button-group">
           <button type="submit" @click="backToLogin">返回登录</button>
-          <button type="button">注册</button>
+          <button type="button" @click="handleRegister">注册</button>
         </div>
 
       </form>
@@ -30,6 +30,8 @@
   </template>
   
   <script>
+  import axios from 'axios';
+  import { mapState } from 'vuex'; // 引入 Vuex 的 mapState
   export default {
     data() {
       return {
@@ -41,16 +43,43 @@
         successMessage: ''
       };
     },
+    computed: {
+      ...mapState(['currentUser']), // 映射 Vuex 中的 currentUser
+    },
     methods: {
       handleRegister() {
-        if (this.password !== this.confirmPassword) {
-          this.errorMessage = '密码和确认密码不一致';
-          this.successMessage = '';
-        } else {
-          this.successMessage = '注册成功！';
-          this.errorMessage = '';
-          // 在这里可以进行后续操作，如发送请求到后端进行注册
-        }
+        // this.successMessage = '注册成功！';
+        // this.errorMessage = '';
+        console.log(this.password + " " + this.confirmPassword)
+      //   const requestBody = {
+      //     name: this.username,
+      //     password: this.password,
+      //     conform: this.confirmPassword // 确认密码字段
+      // };
+        // 在这里可以进行后续操作，如发送请求到后端进行注册
+        // axios.post('http://localhost:8085/user/register', requestBody)
+        axios.post('http://localhost:8085/user/register', null, {
+            params: {
+              name: this.username,
+              password: this.password,
+              conform: this.confirmPassword // 确认密码字段
+            }
+        })
+        .then((response) => {
+          console.log(response.data)
+            if (response.data.code === 1) {
+                this.successMessage = '注册成功';
+                this.errorMessage = '';
+                this.goToHome();
+                this.$store.dispatch('login', response.data.data); // 登录成功后存储用户信息
+            } else {
+                this.errorMessage = response.data.msg || '注册失败';
+                this.successMessage = '';
+            }
+        })
+      },
+      goToHome(){
+        this.$router.push("/home")
       },
       backToLogin(){
         this.$router.push('/')

@@ -1,6 +1,7 @@
 package com.example.photoalbum.controller;
 
 
+import com.example.photoalbum.common.po.Album;
 import com.example.photoalbum.common.po.AlbumPhoto;
 import com.example.photoalbum.common.po.Photo;
 import com.example.photoalbum.common.res.Result;
@@ -94,11 +95,24 @@ public class OssFileController {
 
            photoList.add(photo.getId());
        }
-        AlbumPhoto albumPhoto = new AlbumPhoto();
-        albumPhoto.setAlbum_name(albumName);
-        albumPhoto.setPhoto_id(Arrays.toString(photoList.toArray()));
 
-        albumPhotoMapper.addAlbumPhoto(albumPhoto);
+        String photos = albumMapper.getPhotos(albumName);
+        StringBuilder sb;
+        if(photos == null){
+            sb = new StringBuilder();
+        }else sb = new StringBuilder(photos);
+
+//        AlbumPhoto albumPhoto = new AlbumPhoto();
+//        albumPhoto.setAlbum_name(albumName);
+//        albumPhoto.setPhoto_id(Arrays.toString(photoList.toArray()));
+        for(var id : photoList){
+           if(sb.length() > 0) sb.append("-").append(id);
+           else sb.append(id);
+        }
+        Album album = new Album();
+        album.setAlbumName(albumName);
+        album.setPhotos(sb.toString());
+        albumMapper.addAlbumPhoto(album);
         System.out.println(Arrays.toString(photoList.toArray()));
         return Result.success(uploadUrl);
     }

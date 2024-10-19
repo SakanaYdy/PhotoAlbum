@@ -33,7 +33,14 @@ public class UserController {
      * 普通用户注册
      */
     @PostMapping("/register")
-    public Result<UserVo> register(@RequestBody UserDto userDto,String conform){
+    public Result<UserVo> register(@RequestParam String name,
+                                   @RequestParam String password,
+                                   @RequestParam String conform) {
+        // 处理注册逻辑
+        System.out.println("注册ing" + name + " " + password + " " + conform);
+        UserDto userDto = new UserDto();
+        userDto.setName(name);
+        userDto.setPassword(password);
         return userService.register(userDto,conform);
     }
 

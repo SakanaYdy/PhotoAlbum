@@ -13,7 +13,6 @@
         <div class="button-group">
           <button type="submit">登录</button>
           <button type="button" @click="goToRegister">注册</button>
-          <div v-if="currentUser">{{ currentUser.name }}</div>
         </div>
       </form>
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>

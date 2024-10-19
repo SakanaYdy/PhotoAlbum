@@ -82,7 +82,7 @@ public class AlbumServiceImpl extends ServiceImpl<AlbumMapper, Album>
         if(photos == null) return Result.success(null);
 
         String[] split = photos.split("-");
-
+        if(split.length == 0) return Result.success(null);
         List<String> ans = new ArrayList<>();
         for(var s : split){
             String url = photoMapper.getUrlById(Integer.parseInt(s));

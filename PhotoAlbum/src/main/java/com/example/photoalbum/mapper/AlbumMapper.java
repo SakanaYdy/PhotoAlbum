@@ -3,8 +3,10 @@ package com.example.photoalbum.mapper;
 import com.example.photoalbum.common.dto.AlbumDto;
 import com.example.photoalbum.common.po.Album;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.photoalbum.common.po.AlbumPhoto;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -30,6 +32,9 @@ public interface AlbumMapper extends BaseMapper<Album> {
 
     @Select("select album.photos from album where albumName = #{albumName}")
     String getPhotos(String albumName);
+
+    @Update("UPDATE album SET photos = #{photos} WHERE albumName = #{albumName}")
+    void addAlbumPhoto(Album album);
 }
 
 
