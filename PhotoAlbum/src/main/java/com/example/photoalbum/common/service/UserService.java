@@ -5,6 +5,7 @@ import com.example.photoalbum.common.po.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.photoalbum.common.res.Result;
 import com.example.photoalbum.common.vo.UserVo;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 public interface UserService extends IService<User> {
 
 
-    Result<UserVo> login(UserDto userDto);
+    Result<UserVo> login(UserDto userDto, HttpSession session);
 
     Result<UserVo> register(UserDto userDto, String conform);
 }

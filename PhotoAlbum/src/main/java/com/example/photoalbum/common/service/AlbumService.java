@@ -4,7 +4,9 @@ import com.example.photoalbum.common.dto.AlbumDto;
 import com.example.photoalbum.common.po.Album;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.photoalbum.common.res.Result;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -14,10 +16,12 @@ import java.util.List;
 */
 public interface AlbumService extends IService<Album> {
 
-    Result<Album> createAlbum(AlbumDto albumDto);
+    Result<Album> createAlbum(AlbumDto albumDto, MultipartFile avatar) throws IOException;
 
     Result<List<Album>> getAllAlbum();
 
     Result<List<Album>> getUserAlbum(String username);
+
+    Result<List<String>> getPhotos(String albumName);
 
 }

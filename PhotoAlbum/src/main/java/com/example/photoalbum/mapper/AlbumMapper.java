@@ -18,16 +18,18 @@ public interface AlbumMapper extends BaseMapper<Album> {
 
     /**
      * 新增相册操作
-     * @param albumDto
      */
-    @Insert("insert into album (albumName, owner) values (#{albumName},#{owner})")
-    void addAlbum(AlbumDto albumDto);
+    @Insert("insert into album (albumName, owner,avatar_url) values (#{albumName},#{owner},#{avatar_url})")
+    void addAlbum(Album album);
 
     @Select("select * from album")
     List<Album> getAll();
 
     @Select("select * from album where owner = #{username}")
     List<Album> getAlbumByUser(String username);
+
+    @Select("select album.photos from album where albumName = #{albumName}")
+    String getPhotos(String albumName);
 }
 
 

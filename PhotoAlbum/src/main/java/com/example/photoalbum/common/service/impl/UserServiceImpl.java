@@ -11,6 +11,7 @@ import com.example.photoalbum.common.service.UserService;
 import com.example.photoalbum.common.vo.UserVo;
 import com.example.photoalbum.mapper.UserMapper;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
 
     @Override
-    public Result<UserVo> login(UserDto userDto) {
+    public Result<UserVo> login(UserDto userDto, HttpSession session) {
 
         String name = userDto.getName();
         String password = userDto.getPassword();
@@ -47,6 +48,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         UserVo res = new UserVo();
         BeanUtils.copyProperties(user,res);
+        session.setAttribute("user",user.getName());
 
         return Result.success(res);
     }

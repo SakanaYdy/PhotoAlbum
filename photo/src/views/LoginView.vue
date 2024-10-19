@@ -13,6 +13,7 @@
         <div class="button-group">
           <button type="submit">登录</button>
           <button type="button" @click="goToRegister">注册</button>
+          <div v-if="currentUser">{{ currentUser.name }}</div>
         </div>
       </form>
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
@@ -22,7 +23,11 @@
   
   <script>
   import axios from 'axios';
+  import { mapState } from 'vuex'; // 引入 Vuex 的 mapState
   export default {
+    computed: {
+      ...mapState(['currentUser']), // 映射 Vuex 中的 currentUser
+    },
     data() {
       return {
         username: '',
@@ -32,19 +37,6 @@
       };
     },
     methods: {
-      // handleLogin() {
-      //   if (this.username && this.password) {
-
-
-      //     this.successMessage = '登录成功！';
-      //     this.errorMessage = '';
-      //     this.goToHome();
-      //     // 在这里可以进行后续操作，如发送请求到后端进行登录
-      //   } else {
-      //     this.errorMessage = '请填写所有字段';
-      //     this.successMessage = '';
-      //   }
-      // },
       handleLogin() {
         if (this.username && this.password) {
             const requestBody = {
@@ -56,6 +48,7 @@
                 .then((response) => {
                     if (response.data.code === 1) {
                         this.successMessage = '登录成功！';
+                        this.$store.dispatch('login', response.data.data); // 登录成功后存储用户信息
                         this.errorMessage = '';
                         this.goToHome();
                         // 处理成功后的数据，例如保存用户信息

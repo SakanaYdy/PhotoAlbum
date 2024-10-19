@@ -9,33 +9,26 @@ import lombok.Data;
 
 /**
  * 
- * @TableName album
+ * @TableName album_photo
  */
-@TableName(value ="album")
+@TableName(value ="album_photo")
 @Data
-public class Album implements Serializable {
+public class AlbumPhoto implements Serializable {
     /**
      * 
      */
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    private String albumName;
+    /**
+     * 
+     */
+    private String album_name;
 
     /**
      * 
      */
-    private String owner;
-
-    /**
-     * 
-     */
-    private String photos;
-
-    /**
-     * 相册封面
-     */
-    private String avatar_url;
+    private String photo_id;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
@@ -51,10 +44,10 @@ public class Album implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        Album other = (Album) that;
+        AlbumPhoto other = (AlbumPhoto) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getOwner() == null ? other.getOwner() == null : this.getOwner().equals(other.getOwner()))
-            && (this.getPhotos() == null ? other.getPhotos() == null : this.getPhotos().equals(other.getPhotos()));
+            && (this.getAlbum_name() == null ? other.getAlbum_name() == null : this.getAlbum_name().equals(other.getAlbum_name()))
+            && (this.getPhoto_id() == null ? other.getPhoto_id() == null : this.getPhoto_id().equals(other.getPhoto_id()));
     }
 
     @Override
@@ -62,8 +55,8 @@ public class Album implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getOwner() == null) ? 0 : getOwner().hashCode());
-        result = prime * result + ((getPhotos() == null) ? 0 : getPhotos().hashCode());
+        result = prime * result + ((getAlbum_name() == null) ? 0 : getAlbum_name().hashCode());
+        result = prime * result + ((getPhoto_id() == null) ? 0 : getPhoto_id().hashCode());
         return result;
     }
 
@@ -74,8 +67,8 @@ public class Album implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", owner=").append(owner);
-        sb.append(", photos=").append(photos);
+        sb.append(", album_name=").append(album_name);
+        sb.append(", photo_id=").append(photo_id);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

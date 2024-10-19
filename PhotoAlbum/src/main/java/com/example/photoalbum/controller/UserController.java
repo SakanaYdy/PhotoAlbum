@@ -6,6 +6,7 @@ import com.example.photoalbum.common.res.Result;
 import com.example.photoalbum.common.service.UserService;
 import com.example.photoalbum.common.vo.UserVo;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +25,8 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
-    public Result<UserVo> loginUser(@RequestBody UserDto userDto){
-        return userService.login(userDto);
+    public Result<UserVo> loginUser(@RequestBody UserDto userDto, HttpSession session){
+        return userService.login(userDto,session);
     }
 
     /**

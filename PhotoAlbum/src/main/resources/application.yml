@@ -5,6 +5,12 @@ spring:
     username: ydy
     password: 1234
 
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+
 # swagger api??
 springdoc:
   swagger-ui:
@@ -24,3 +30,7 @@ knife4j:
     language: zh_cn
 server:
   port: 8085
+  tomcat:
+    max-swallow-size: 100MB
+
+

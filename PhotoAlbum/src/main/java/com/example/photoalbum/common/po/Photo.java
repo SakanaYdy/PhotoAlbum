@@ -9,33 +9,21 @@ import lombok.Data;
 
 /**
  * 
- * @TableName album
+ * @TableName photo
  */
-@TableName(value ="album")
+@TableName(value ="photo")
 @Data
-public class Album implements Serializable {
+public class Photo implements Serializable {
     /**
      * 
      */
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    private String albumName;
-
     /**
      * 
      */
-    private String owner;
-
-    /**
-     * 
-     */
-    private String photos;
-
-    /**
-     * 相册封面
-     */
-    private String avatar_url;
+    private String url;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
@@ -51,10 +39,9 @@ public class Album implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        Album other = (Album) that;
+        Photo other = (Photo) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getOwner() == null ? other.getOwner() == null : this.getOwner().equals(other.getOwner()))
-            && (this.getPhotos() == null ? other.getPhotos() == null : this.getPhotos().equals(other.getPhotos()));
+            && (this.getUrl() == null ? other.getUrl() == null : this.getUrl().equals(other.getUrl()));
     }
 
     @Override
@@ -62,8 +49,7 @@ public class Album implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getOwner() == null) ? 0 : getOwner().hashCode());
-        result = prime * result + ((getPhotos() == null) ? 0 : getPhotos().hashCode());
+        result = prime * result + ((getUrl() == null) ? 0 : getUrl().hashCode());
         return result;
     }
 
@@ -74,8 +60,7 @@ public class Album implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", owner=").append(owner);
-        sb.append(", photos=").append(photos);
+        sb.append(", url=").append(url);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

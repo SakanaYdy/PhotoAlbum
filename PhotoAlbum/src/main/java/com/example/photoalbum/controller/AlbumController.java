@@ -5,9 +5,13 @@ import com.example.photoalbum.common.dto.AlbumDto;
 import com.example.photoalbum.common.po.Album;
 import com.example.photoalbum.common.res.Result;
 import com.example.photoalbum.common.service.AlbumService;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -22,16 +26,24 @@ public class AlbumController {
     /**
      * 创建相册
      */
+//    @PostMapping("/create")
+//    public Result<Album> createAlbum(MultipartFile avatar,AlbumDto albumDto) throws IOException {
+//        return albumService.createAlbum(albumDto,avatar);
+////        return null;
+//    }
+
     @PostMapping("/create")
-    public Result<Album> createAlbum(@RequestBody AlbumDto albumDto){
-        return albumService.createAlbum(albumDto);
+    public Result<Album> createAlbum(@RequestParam("avatar") MultipartFile avatar,
+                                    String albumName,String owner) throws IOException {
+        AlbumDto albumDto = new AlbumDto(albumName,owner);
+        return albumService.createAlbum(albumDto, avatar);
     }
 
     /**
      * 获取到所有相册
      * @return
      */
-    @PostMapping("/getAll")
+    @GetMapping("/getAll")
     public Result<List<Album>> getAllAlbum(){
         return albumService.getAllAlbum();
     }
@@ -41,8 +53,18 @@ public class AlbumController {
      * @return
      */
     @PostMapping("/getByUser")
-    public Result<List<Album>> getUserAlbum(String username){
+    public Result<List<Album>> getUserAlbum(@RequestParam String username){
+        System.out.println("用户名:" + username);
         return albumService.getUserAlbum(username);
+    }
+
+    /**
+     * 获取到相册内的图片数据
+     */
+    @PostMapping("/getPhotos")
+    public Result<List<String>> getPhotos(@RequestParam  String albumName){
+        System.out.println("相册名：{}" + albumName);
+        return albumService.getPhotos(albumName);
     }
 
 }
