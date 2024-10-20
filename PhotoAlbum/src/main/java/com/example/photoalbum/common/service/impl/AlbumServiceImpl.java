@@ -2,9 +2,12 @@ package com.example.photoalbum.common.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.photoalbum.common.dto.AlbumDto;
+import com.example.photoalbum.common.dto.AlbumPhotosDto;
 import com.example.photoalbum.common.po.Album;
+import com.example.photoalbum.common.po.Comment;
 import com.example.photoalbum.common.res.Result;
 import com.example.photoalbum.common.service.AlbumService;
+import com.example.photoalbum.mapper.AlbumCommentMapper;
 import com.example.photoalbum.mapper.AlbumMapper;
 import com.example.photoalbum.mapper.PhotoMapper;
 import com.example.photoalbum.utils.AliOssUtil;
@@ -36,6 +39,9 @@ public class AlbumServiceImpl extends ServiceImpl<AlbumMapper, Album>
 
     @Resource
     private PhotoMapper photoMapper;
+
+    @Resource
+    private AlbumCommentMapper albumCommentMapper;
 
     @Override
     public Result<Album> createAlbum(AlbumDto albumDto, MultipartFile avatar) throws IOException {
@@ -89,6 +95,30 @@ public class AlbumServiceImpl extends ServiceImpl<AlbumMapper, Album>
             ans.add(url);
         }
         return Result.success(ans);
+    }
+
+    @Override
+    public Result<AlbumPhotosDto> getPhotosWithComments(String albumName) {
+        // 先获取到所有的图片链接
+        String photos = albumMapper.getPhotos(albumName);
+
+        if(photos == null) return Result.success(null);
+
+        String[] split = photos.split("-");
+        if(split.length == 0) return Result.success(null);
+        List<String> ans = new ArrayList<>();
+        for(var s : split){
+            String url = photoMapper.getUrlById(Integer.parseInt(s));
+            ans.add(url);
+        }
+
+        AlbumPhotosDto res = new AlbumPhotosDto();
+        res.setUrls(ans);
+
+        List<Comment> comments = albumCommentMapper.getComments(albumName);
+        res.setComments(comments);
+
+        return Result.success(res);
     }
 }
 

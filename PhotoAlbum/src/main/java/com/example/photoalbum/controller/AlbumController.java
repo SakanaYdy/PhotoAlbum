@@ -2,6 +2,7 @@ package com.example.photoalbum.controller;
 
 
 import com.example.photoalbum.common.dto.AlbumDto;
+import com.example.photoalbum.common.dto.AlbumPhotosDto;
 import com.example.photoalbum.common.po.Album;
 import com.example.photoalbum.common.res.Result;
 import com.example.photoalbum.common.service.AlbumService;
@@ -66,5 +67,18 @@ public class AlbumController {
         System.out.println("相册名：{}" + albumName);
         return albumService.getPhotos(albumName);
     }
+
+    /**
+     * 获取的相册内容以及评论信息
+     * @param albumName
+     * @return
+     */
+    @PostMapping("/getPhotos_comment")
+    public Result<AlbumPhotosDto> getPhotosWithComments(@RequestParam String albumName){
+        System.out.println("相册名：{}" + albumName);
+        return albumService.getPhotosWithComments(albumName);
+    }
+
+
 
 }

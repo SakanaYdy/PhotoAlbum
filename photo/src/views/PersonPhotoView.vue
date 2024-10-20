@@ -24,9 +24,9 @@
               <el-menu-item index="2-4-3">item three</el-menu-item>
             </el-sub-menu>
           </el-sub-menu>
-          <el-menu-item index="3">个人相册</el-menu-item>
-          <el-menu-item index="4">登出</el-menu-item>
-          <el-menu-item index="5">
+          <el-menu-item index="3" @click="goToPerson">个人相册</el-menu-item>
+          <el-menu-item index="4" @click="logout">登出</el-menu-item>
+          <el-menu-item index="5" @click="goToNOtice">
             <el-icon><Bell />通知</el-icon>
           </el-menu-item>
           <el-menu-item index="6">
@@ -103,6 +103,28 @@
           class="album-image"
         />
       </div>
+      
+      <!-- 添加评论区域 -->
+      <div class="comment-section">
+        <!-- 个人对于自己的相册不需要评论 -->
+        <!-- <el-input
+          type="textarea"
+          v-model="comment"
+          placeholder="在此输入评论"
+          rows="4"
+          style="margin-top: 10px;"
+        />
+        <el-button type="primary" @click="submitComment">提交评论</el-button> -->
+        
+        <!-- 显示之前的评论 -->
+        <div class="previous-comments" v-if="comments.length > 0" style="margin-top: 20px;">
+          <h4>之前的评论:</h4>
+          <el-card v-for="(prevComment, index) in comments" :key="index" class="comment-card">
+            <div><strong>{{ prevComment.commenter }}:</strong> {{ prevComment.comment }}</div>
+          </el-card>
+        </div>
+      </div>
+      
       <input
         type="file"
         @change="handleImageUpload"
@@ -110,6 +132,7 @@
         style="display: none;"
         ref="fileInput"
       />
+      
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="addImage" type="primary">添加图片</el-button>
@@ -117,6 +140,7 @@
         </div>
       </template>
     </el-dialog>
+
 
 
   </div>
@@ -162,12 +186,24 @@ export default {
     return {
       albums: [], // 初始化为空数组
       activeIndex2: '1', // 当前活动的菜单项
+      comment: '', // 存储当前输入的评论
+      comments: []  // 存储之前的评论
     };
   },
   mounted() {
     this.fetchAlbums(); // 组件挂载后获取相册数据
   },
   methods: {
+    goToNOtice(){
+      this.$router.push("/notice")
+    },
+    goToPerson(){
+      this.$router.push("/person")
+    },
+    logout(){
+      this.$store.dispatch('logout'); // 登录成功后存储用户信息
+      this.$router.push("/")
+    },
     async fetchAlbums() {
       try {
         const response = await axios.post('http://localhost:8085/photo/getByUser', null, {
@@ -191,7 +227,8 @@ export default {
       // this.currentAlbum.images = album.images; // 设置当前相册的图片
       this.currentAlbum.name = album.albumName
       console.log(album.albumName)
-      this.fetchPhotos(album.albumName); // 获取相册的图片
+      // this.fetchPhotos(album.albumName); // 获取相册的图片
+      this.fetchPhotosWithComments(album.albumName);
       this.dialogVisible = true; // 打开对话框
     },
     async fetchPhotos(albumName) {
@@ -211,6 +248,26 @@ export default {
         this.$message.error('获取相册图片时出错');
       }
     },
+    async fetchPhotosWithComments(albumName) {
+      try {
+        console.log(albumName);
+        const response = await axios.post('http://localhost:8085/photo/getPhotos_comment', null, {
+          params: { albumName }
+        });
+
+        if (response.data.code === 1) {
+          const { urls, comments } = response.data.data || {}; // 使用空对象避免解构错误
+          this.currentAlbum.images = urls || []; // 如果 urls 为 null，设置为空数组
+          this.comments = comments || []; // 如果 comments 为 null，设置为空数组
+        } else {
+          this.$message.error(`获取相册图片失败: ${response.data.msg}`);
+        }
+      } catch (error) {
+        console.error(error);
+        this.$message.error('获取相册图片时出错');
+      }
+    },
+
     addImage() {
       // 这里可以实现添加图片的逻辑
       this.$refs.fileInput.click(); // 触发文件选择
@@ -296,6 +353,36 @@ export default {
       } catch (error) {
         console.error(error);
         this.$message.error('创建相册时出错');
+      }
+    },
+    async submitComment() {
+      console.log("发表评论")
+      if (this.comment) {
+        const albumCommentDto = {
+          album_name: this.currentAlbum.name, // 当前相册的名称
+          commenter: this.currentUser.name, // 当前用户的名称
+          comment: this.comment // 用户输入的评论
+        };
+
+        try {
+          const response = await axios.post('http://localhost:8085/comment/add', albumCommentDto);
+
+          if (response.data.code === 1) {
+            // 添加成功后，将新评论添加到评论数组中
+            this.comments.push({
+              commenter: this.currentUser.name,
+              comment: this.comment
+            });
+            this.comment = ''; // 清空评论输入框
+          } else {
+            this.$message.error(`添加评论失败: ${response.data.msg}`);
+          }
+        } catch (error) {
+          console.error(error);
+          this.$message.error('提交评论时出错');
+        }
+      } else {
+        this.$message.warning('请输入评论内容');
       }
     }
   }

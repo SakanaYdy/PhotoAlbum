@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.photoalbum.mapper.AlbumCommentMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.photoalbum.common.po.AlbumComment">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="album_name" column="album_name" jdbcType="VARCHAR"/>
+            <result property="commenter" column="commenter" jdbcType="VARCHAR"/>
+            <result property="comment" column="comment" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,album_name,commenter,
+        comment
+    </sql>
+</mapper>
