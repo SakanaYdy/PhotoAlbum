@@ -38,10 +38,10 @@
       <h1>消息通知</h1>
       <el-card v-for="(notification, index) in notifications" :key="index" class="notification-card" @click="viewNotification(notification)">
         <div class="notification-content">
-          <div class="notification-title">{{ notification.title }}</div>
+          <div class="notification-title">{{ notification.from }} {{ notifications.to }}</div>
           <span class="notification-time">{{ formatTime(notification.time) }}</span>
         </div>
-        <p class="notification-message">{{ notification.message }}</p>
+        <p class="notification-message">{{ notification.notice }}</p>
       </el-card>
     </el-main>
 
@@ -50,19 +50,29 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'NoticeView',
   data() {
     return {
-      notifications: [
-        { title: '系统更新', message: '您的系统已成功更新到最新版本。', time: new Date() },
-        { title: '新消息', message: '您有一条新的消息来自管理员。', time: new Date() },
-        { title: '活动通知', message: '即将开始的活动，请做好准备。', time: new Date() },
-        // 更多通知...
-      ],
+      notifications: [],
     };
   },
+  mounted() {
+    this.fetchNotices();
+  },
   methods: {
+    async fetchNotices() {
+      try {
+        // const response = await axios.post('http://localhost:8085/notice/getNotice', { username: 'ydy' });
+        const response = await axios.post('http://localhost:8085/notice/getNotice', null, {
+          params: { username : "ydy" } // 使用 params 传递查询参数
+        });
+        this.notifications = response.data.data; // 根据后端返回的数据结构进行调整
+      } catch (error) {
+        console.error('获取通知失败:', error);
+      }
+    },
     goToPerson() {
       this.$router.push("/person");
     },

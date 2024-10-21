@@ -1,8 +1,11 @@
 package com.example.photoalbum.common.service;
 
+import com.example.photoalbum.common.po.AlbumComment;
 import com.example.photoalbum.common.po.Notice;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.photoalbum.common.res.Result;
+
+import java.util.List;
 
 /**
 * @author 杨大宇
@@ -12,4 +15,7 @@ import com.example.photoalbum.common.res.Result;
 public interface NoticeService extends IService<Notice> {
 
     Result<Notice> addNotice(Notice notice);
+
+    Result<List<Notice>> getNotice(String username);
+
 }

@@ -3,6 +3,9 @@ package com.example.photoalbum.common.po;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import lombok.Data;
 
@@ -31,7 +34,7 @@ public class Notice implements Serializable {
     /**
      * 
      */
-    private Date time;
+    private LocalDateTime time;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

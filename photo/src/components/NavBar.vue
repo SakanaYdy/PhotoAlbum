@@ -15,7 +15,7 @@
           <el-sub-menu index="2">
             <template #title>相册管理</template>
             <el-menu-item index="2-1">相册类别</el-menu-item>
-            <el-menu-item index="2-2">item two</el-menu-item>
+            <el-menu-item index="2-2" @click="goToManage">相册维护</el-menu-item>
             <el-menu-item index="2-3">item three</el-menu-item>
             <el-sub-menu index="2-4">
               <template #title>item four</template>
@@ -42,7 +42,7 @@
       <el-row :gutter="20">
         <el-col v-for="(album, index) in albums" :key="index" :span="8">
           <div class="album" @click="openAlbum(album)" :class="album-container">
-            <h3 class="album-title">{{ album.albumName }}</h3> <!-- 显示相册名称 -->
+            <h3 class="album-title">{{ album.albumName }}  {{ album.owner }}</h3> <!-- 显示相册名称 -->
             <img v-if="album.avatar_url" :src="album.avatar_url" alt="Album Cover" class="album-cover"/>
           </div>
         </el-col>
@@ -121,7 +121,7 @@ export default {
     },
   setup() {
     const dialogVisible = ref(false); // 对话框是否可见
-    const currentAlbum = ref({ name: '', images: [] }); // 当前相册，初始包含 name 属性
+    const currentAlbum = ref({ name: '', images: [] ,owner: ''}); // 当前相册，初始包含 name 属性
    
 
     const album = ref([]);
@@ -157,6 +157,9 @@ export default {
     this.fetchAlbums(); // 组件挂载后获取相册数据
   },
   methods: {
+    goToManage(){
+      this.$router.push("/manage")
+    },
     goToNOtice(){
       this.$router.push("/notice")
     },
@@ -187,6 +190,7 @@ export default {
       console.log(album); // 确认相册对象
       // this.currentAlbum.images = album.images; // 设置当前相册的图片
       this.currentAlbum.name = album.albumName
+      this.currentAlbum.owner = album.owner
       console.log(album.albumName)
       this.fetchPhotosWithComments(album.albumName); // 获取相册的图片
       this.dialogVisible = true; // 打开对话框

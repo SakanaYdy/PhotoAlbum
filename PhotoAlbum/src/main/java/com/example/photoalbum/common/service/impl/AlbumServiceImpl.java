@@ -3,10 +3,13 @@ package com.example.photoalbum.common.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.photoalbum.common.dto.AlbumDto;
 import com.example.photoalbum.common.dto.AlbumPhotosDto;
+import com.example.photoalbum.common.dto.DeleteAlbumDto;
 import com.example.photoalbum.common.po.Album;
 import com.example.photoalbum.common.po.Comment;
+import com.example.photoalbum.common.po.Notice;
 import com.example.photoalbum.common.res.Result;
 import com.example.photoalbum.common.service.AlbumService;
+import com.example.photoalbum.common.service.NoticeService;
 import com.example.photoalbum.mapper.AlbumCommentMapper;
 import com.example.photoalbum.mapper.AlbumMapper;
 import com.example.photoalbum.mapper.PhotoMapper;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -42,6 +46,9 @@ public class AlbumServiceImpl extends ServiceImpl<AlbumMapper, Album>
 
     @Resource
     private AlbumCommentMapper albumCommentMapper;
+
+    @Resource
+    private NoticeService noticeService;
 
     @Override
     public Result<Album> createAlbum(AlbumDto albumDto, MultipartFile avatar) throws IOException {
@@ -119,6 +126,25 @@ public class AlbumServiceImpl extends ServiceImpl<AlbumMapper, Album>
         res.setComments(comments);
 
         return Result.success(res);
+    }
+
+    @Override
+    public Result<DeleteAlbumDto> deleteAlbum(DeleteAlbumDto deleteAlbumDto) {
+
+        AlbumDto albumDto = new AlbumDto();
+        BeanUtils.copyProperties(deleteAlbumDto,albumDto);
+
+        albumMapper.deleteAlbum(albumDto);
+
+        // 触发通知
+        Notice notice = new Notice();
+        notice.setFrom(deleteAlbumDto.getMaker());
+        notice.setTo(deleteAlbumDto.getOwner());
+        notice.setTime(LocalDateTime.now());
+        notice.setNotice(deleteAlbumDto.getReason());
+        noticeService.addNotice(notice);
+
+        return Result.success(deleteAlbumDto);
     }
 }
 

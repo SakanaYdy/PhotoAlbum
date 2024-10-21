@@ -1,6 +1,7 @@
 package com.example.photoalbum.common.service;
 
 import com.example.photoalbum.common.dto.AlbumCommentDto;
+import com.example.photoalbum.common.dto.DeleteComment;
 import com.example.photoalbum.common.po.AlbumComment;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.photoalbum.common.res.Result;
@@ -13,4 +14,6 @@ import com.example.photoalbum.common.res.Result;
 public interface AlbumCommentService extends IService<AlbumComment> {
 
     Result<AlbumCommentDto> add(AlbumCommentDto albumCommentDto);
+
+    Result<DeleteComment> deleteComment(DeleteComment deleteComment);
 }

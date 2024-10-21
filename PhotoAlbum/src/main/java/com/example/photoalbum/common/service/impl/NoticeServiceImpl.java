@@ -1,12 +1,14 @@
 package com.example.photoalbum.common.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.photoalbum.common.po.AlbumComment;
 import com.example.photoalbum.common.po.Notice;
 import com.example.photoalbum.common.res.Result;
 import com.example.photoalbum.common.service.NoticeService;
 import com.example.photoalbum.mapper.NoticeMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import java.util.*;
 
 /**
 * @author 杨大宇
@@ -25,6 +27,13 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
         noticeMapper.addNotice(notice);
         return Result.success(notice);
     }
+
+    @Override
+    public Result<List<Notice>> getNotice(String username) {
+        List<Notice> notices = noticeMapper.getNotice(username);
+        return Result.success(notices);
+    }
+
 }
 
 

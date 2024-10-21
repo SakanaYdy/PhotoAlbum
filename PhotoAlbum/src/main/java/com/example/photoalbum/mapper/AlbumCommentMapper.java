@@ -4,6 +4,7 @@ import com.example.photoalbum.common.dto.AlbumCommentDto;
 import com.example.photoalbum.common.po.AlbumComment;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.photoalbum.common.po.Comment;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 
@@ -24,6 +25,9 @@ public interface AlbumCommentMapper extends BaseMapper<AlbumComment> {
             "(#{album_name},#{commenter},#{comment})")
     void add(AlbumCommentDto albumCommentDto);
 
+    @Delete("delete from PhotoAlbum.album_comment where album_name = #{album_name} " +
+            "and commenter = #{commenter}")
+    void deleteComment(AlbumComment albumComment);
 }
 
 

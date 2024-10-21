@@ -2,6 +2,7 @@ package com.example.photoalbum.common.service;
 
 import com.example.photoalbum.common.dto.AlbumDto;
 import com.example.photoalbum.common.dto.AlbumPhotosDto;
+import com.example.photoalbum.common.dto.DeleteAlbumDto;
 import com.example.photoalbum.common.po.Album;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.photoalbum.common.res.Result;
@@ -26,4 +27,6 @@ public interface AlbumService extends IService<Album> {
     Result<List<String>> getPhotos(String albumName);
 
     Result<AlbumPhotosDto> getPhotosWithComments(String albumName);
+
+    Result<DeleteAlbumDto> deleteAlbum(DeleteAlbumDto deleteAlbumDto);
 }

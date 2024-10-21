@@ -4,6 +4,7 @@ import com.example.photoalbum.common.dto.AlbumDto;
 import com.example.photoalbum.common.po.Album;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.photoalbum.common.po.AlbumPhoto;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -35,6 +36,9 @@ public interface AlbumMapper extends BaseMapper<Album> {
 
     @Update("UPDATE album SET photos = #{photos} WHERE albumName = #{albumName}")
     void addAlbumPhoto(Album album);
+
+    @Delete("delete from album where albumName = #{albumName} and owner = #{owner}")
+    void deleteAlbum(AlbumDto albumDto);
 }
 
 

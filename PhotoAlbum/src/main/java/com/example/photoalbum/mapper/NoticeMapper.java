@@ -1,8 +1,13 @@
 package com.example.photoalbum.mapper;
 
+import com.example.photoalbum.common.po.AlbumComment;
 import com.example.photoalbum.common.po.Notice;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
 * @author 杨大宇
@@ -15,6 +20,13 @@ public interface NoticeMapper extends BaseMapper<Notice> {
     @Insert("insert into PhotoAlbum.notice (`from`, `to`, notice, time) VALUES (" +
             "#{from},#{to},#{notice},#{time})")
     void addNotice(Notice notice);
+
+    @Select("select * from PhotoAlbum.notice where `to`= #{username}")
+    List<Notice> getNotice(String username);
+
+    @Delete("delete from PhotoAlbum.album_comment where album_name = #{album_name} " +
+            "and commenter = #{commenter}")
+    void deleteComment(AlbumComment albumComment);
 }
 
 
