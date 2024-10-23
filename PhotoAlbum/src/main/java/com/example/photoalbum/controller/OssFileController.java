@@ -2,7 +2,6 @@ package com.example.photoalbum.controller;
 
 
 import com.example.photoalbum.common.po.Album;
-import com.example.photoalbum.common.po.AlbumPhoto;
 import com.example.photoalbum.common.po.Photo;
 import com.example.photoalbum.common.res.Result;
 import com.example.photoalbum.mapper.AlbumMapper;
@@ -12,7 +11,6 @@ import com.example.photoalbum.mapper.PhotoMapper;
 import com.example.photoalbum.utils.AliOssUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

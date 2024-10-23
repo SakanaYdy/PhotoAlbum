@@ -3,10 +3,10 @@ package com.example.photoalbum.controller;
 
 import com.example.photoalbum.common.dto.AlbumDto;
 import com.example.photoalbum.common.dto.AlbumPhotosDto;
+import com.example.photoalbum.common.dto.UserLikeAlbum;
 import com.example.photoalbum.common.po.Album;
 import com.example.photoalbum.common.res.Result;
 import com.example.photoalbum.common.service.AlbumService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +35,7 @@ public class AlbumController {
 
     @PostMapping("/create")
     public Result<Album> createAlbum(@RequestParam("avatar") MultipartFile avatar,
-                                    String albumName,String owner) throws IOException {
+                                     String albumName, String owner) throws IOException {
         AlbumDto albumDto = new AlbumDto(albumName,owner);
         return albumService.createAlbum(albumDto, avatar);
     }
@@ -47,6 +47,12 @@ public class AlbumController {
     @GetMapping("/getAll")
     public Result<List<Album>> getAllAlbum(){
         return albumService.getAllAlbum();
+    }
+
+
+    @PostMapping("/getAll_user")
+    public Result<List<UserLikeAlbum>> getAllWithUser(@RequestParam String username){
+        return albumService.getAllAlbumWithUser(username);
     }
 
     /**
@@ -79,5 +85,60 @@ public class AlbumController {
         return albumService.getPhotosWithComments(albumName);
     }
 
+    /**
+     *
+     * @param albumName 相册名称
+     * @param username 点赞的用户
+     * @param albumOwner 被点赞相册的拥有者
+     */
+    @PostMapping("/likeAlbum")
+    public Result<Album> likeAlbum(@RequestParam String albumName,
+                                   @RequestParam String username,
+                                   @RequestParam String albumOwner){
+        log.info("被点赞相册名： {}",albumName);
+        log.info("{}点赞{}",username,albumName);
+        log.info("相册所有者{}",albumOwner);
+        return albumService.likeAlbum(albumName,username,albumOwner);
+    }
+
+    /**
+     * 取消点赞相册
+     */
+    @PostMapping("/dislikeAlbum")
+    public Result<Album> dislikeAlbum(@RequestParam String albumName,
+                                      @RequestParam String username,
+                                      @RequestParam String albumOwner){
+        return albumService.dislikeAlbum(albumName,username,albumOwner);
+    }
+
+    /**
+     * 收藏相册
+
+     */
+    @PostMapping("/favAlbum")
+    public Result<Album> favAlbum(@RequestParam String albumName,
+                                  @RequestParam String username,
+                                  @RequestParam String albumOwner){
+        return albumService.favAlbum(albumName,username,albumOwner);
+    }
+
+    /**
+     * 取消收藏相册
+     */
+    @PostMapping("/disfavAlbum")
+    public Result<Album> disfavAlbum(@RequestParam String albumName,
+                                     @RequestParam String username,
+                                     @RequestParam String albumOwner){
+        return albumService.disfavAlbum(albumName,username,albumOwner);
+    }
+
+    /**
+     * 获取到用户收藏相册信息
+     */
+    @PostMapping("/favorite")
+    Result<List<UserLikeAlbum>>  getFavoriteAlbum(@RequestParam String username){
+        System.out.println("用户名:" + username);
+        return albumService.getFavoriteAlbum(username);
+    }
 
 }

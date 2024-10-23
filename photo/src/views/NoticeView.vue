@@ -15,21 +15,15 @@
           <el-sub-menu index="2">
             <template #title>相册管理</template>
             <el-menu-item index="2-1">相册类别</el-menu-item>
-            <el-menu-item index="2-2">item two</el-menu-item>
-            <el-menu-item index="2-3">item three</el-menu-item>
-            <el-sub-menu index="2-4">
-              <template #title>item four</template>
-              <el-menu-item index="2-4-1">item one</el-menu-item>
-              <el-menu-item index="2-4-2">item two</el-menu-item>
-              <el-menu-item index="2-4-3">item three</el-menu-item>
-            </el-sub-menu>
+            <el-menu-item index="2-2">相册维护</el-menu-item>
           </el-sub-menu>
           <el-menu-item index="3" @click="goToPerson">个人相册</el-menu-item>
           <el-menu-item index="4" @click="logout">登出</el-menu-item>
           <el-menu-item index="5" @click="goToNotifications">
             <el-icon><Bell />通知</el-icon>
           </el-menu-item>
-          <el-menu-item index="6">
+          <el-menu-item index="6" @click="goToFav">收藏</el-menu-item>
+          <el-menu-item index="7">
             <div v-if="currentUser">{{ currentUser.name }}</div>
           </el-menu-item>
         </el-menu>
@@ -51,22 +45,30 @@
 
 <script>
 import axios from 'axios';
+import { mapState } from 'vuex'; // 引入 Vuex 的 mapState
 export default {
   name: 'NoticeView',
   data() {
     return {
       notifications: [],
+      activeIndex2: '5', // 当前活动的菜单项
     };
   },
+  computed: {
+      ...mapState(['currentUser']), // 映射 Vuex 中的 currentUser
+    },
   mounted() {
     this.fetchNotices();
   },
   methods: {
+    goToFav(){
+      this.$router.push("/favorite")
+    },
     async fetchNotices() {
       try {
         // const response = await axios.post('http://localhost:8085/notice/getNotice', { username: 'ydy' });
         const response = await axios.post('http://localhost:8085/notice/getNotice', null, {
-          params: { username : "ydy" } // 使用 params 传递查询参数
+          params: { username : this.currentUser.name } // 使用 params 传递查询参数
         });
         this.notifications = response.data.data; // 根据后端返回的数据结构进行调整
       } catch (error) {

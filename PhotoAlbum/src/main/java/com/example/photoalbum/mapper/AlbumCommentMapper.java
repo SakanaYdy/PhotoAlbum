@@ -26,7 +26,7 @@ public interface AlbumCommentMapper extends BaseMapper<AlbumComment> {
     void add(AlbumCommentDto albumCommentDto);
 
     @Delete("delete from PhotoAlbum.album_comment where album_name = #{album_name} " +
-            "and commenter = #{commenter}")
+            "and commenter = #{commenter} and comment = #{comment}")
     void deleteComment(AlbumComment albumComment);
 }
 

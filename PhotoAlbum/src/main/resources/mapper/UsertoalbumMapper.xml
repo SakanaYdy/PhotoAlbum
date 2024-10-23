@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.photoalbum.mapper.UsertoalbumMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.photoalbum.common.po.Usertoalbum">
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="albumName" column="albumName" jdbcType="VARCHAR"/>
+            <result property="like" column="like" jdbcType="TINYINT"/>
+            <result property="favorite" column="favorite" jdbcType="TINYINT"/>
+            <result property="recommend" column="recommend" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        username,albumName,like,
+        favorite,recommend
+    </sql>
+</mapper>

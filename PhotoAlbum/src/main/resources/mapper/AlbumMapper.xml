@@ -6,11 +6,18 @@
 
     <resultMap id="BaseResultMap" type="com.example.photoalbum.common.po.Album">
             <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="albumName" column="albumName" jdbcType="VARCHAR"/>
             <result property="owner" column="owner" jdbcType="VARCHAR"/>
             <result property="photos" column="photos" jdbcType="VARCHAR"/>
+            <result property="avatar_url" column="avatar_url" jdbcType="VARCHAR"/>
+            <result property="thumbs" column="thumbs" jdbcType="INTEGER"/>
+            <result property="favorites" column="favorites" jdbcType="INTEGER"/>
+            <result property="recommends" column="recommends" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,owner,photos
+        id,albumName,owner,
+        photos,avatar_url,thumbs,
+        favorites,recommends
     </sql>
 </mapper>

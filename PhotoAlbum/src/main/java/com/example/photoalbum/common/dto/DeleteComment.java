@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class DeleteComment {
     private String album_name;
     private String commenter;
-//    private String comment;
+    private String comment;
     private String maker;
     private String reason;
 }

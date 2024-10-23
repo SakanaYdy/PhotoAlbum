@@ -16,20 +16,14 @@
             <template #title>相册管理</template>
             <el-menu-item index="2-1">相册类别</el-menu-item>
             <el-menu-item index="2-2" @click="goToManage">相册维护</el-menu-item>
-            <el-menu-item index="2-3">item three</el-menu-item>
-            <el-sub-menu index="2-4">
-              <template #title>item four</template>
-              <el-menu-item index="2-4-1">item one</el-menu-item>
-              <el-menu-item index="2-4-2">item two</el-menu-item>
-              <el-menu-item index="2-4-3">item three</el-menu-item>
-            </el-sub-menu>
           </el-sub-menu>
           <el-menu-item index="3" @click="goToPerson">个人相册</el-menu-item>
           <el-menu-item index="4" @click="logout">登出</el-menu-item>
           <el-menu-item index="5" @click="goToNOtice">
             <el-icon><Bell />通知</el-icon>
           </el-menu-item>
-          <el-menu-item index="6">
+          <el-menu-item index="6" @click="goToFav">收藏</el-menu-item>
+          <el-menu-item index="7">
             <div v-if="currentUser">{{ currentUser.name }}</div>
           </el-menu-item>
         </el-menu>
@@ -37,18 +31,57 @@
 
       <!-- 多个相册显示 -->
       <el-main>
-    <div class="block text-center">
-      <span class="demonstration">相册展示</span>
-      <el-row :gutter="20">
-        <el-col v-for="(album, index) in albums" :key="index" :span="8">
-          <div class="album" @click="openAlbum(album)" :class="album-container">
-            <h3 class="album-title">{{ album.albumName }}  {{ album.owner }}</h3> <!-- 显示相册名称 -->
-            <img v-if="album.avatar_url" :src="album.avatar_url" alt="Album Cover" class="album-cover"/>
-          </div>
-        </el-col>
-      </el-row>
-    </div>
-  </el-main>
+      <div class="block text-center">
+        <span class="demonstration">相册展示</span>
+        <el-row :gutter="20">
+          <el-col v-for="(album, index) in albums" :key="index" :span="8">
+            <div class="album" @click="openAlbum(album)" :class="album-container">
+              <h3 class="album-title">{{ album.albumName }}  {{ album.owner }}</h3>
+              <img v-if="album.avatar_url" :src="album.avatar_url" alt="Album Cover" class="album-cover"/>
+            </div>
+            <el-icon><Pointer /></el-icon>
+            <el-icon><Star /></el-icon>
+            <el-icon><StarFilled /></el-icon>
+            <el-row :gutter="20">
+              <el-col :span="10">
+                <div class="grid-content ep-bg-purple">点赞数: {{ album.thumbs }}</div>
+                <!-- :disabled="album.like"  -->
+                <el-button 
+                    type="primary" 
+                    @click="toggleLike(album)" 
+                    :style="{ backgroundColor: album.like ? '#d9d9d9' : '' }">
+                    点赞
+                </el-button>
+              </el-col>
+              <el-col :span="10">
+                <div class="grid-content ep-bg-purple">收藏数：{{ album.favorites }}</div>
+                <!-- :disabled="album.favorite"  -->
+                <el-button 
+                    type="warning" 
+                    @click="toggleFavorite(album)" 
+                    :style="{ backgroundColor: album.favorite ? '#d9d9d9' : '' }">
+                    收藏
+                </el-button>
+              </el-col>
+              <!-- <el-col :span="6">
+                <div class="grid-content ep-bg-purple">推荐数：{{ album.recommends }}</div>
+                :disabled="album.recommend" 
+                <el-button 
+                    type="success" 
+                    @click="toggleRecommend(album)" 
+                    :style="{ backgroundColor : album.recommend ? '#d9d9d9' : '' }">
+                    推荐
+                </el-button>
+              </el-col> -->
+              <!-- <el-col :span="6">
+                <div class="grid-content ep-bg-purple" />
+              </el-col> -->
+            </el-row>
+          </el-col>
+        </el-row>
+
+      </div>
+    </el-main>
     </el-container>
     
 
@@ -121,10 +154,10 @@ export default {
     },
   setup() {
     const dialogVisible = ref(false); // 对话框是否可见
-    const currentAlbum = ref({ name: '', images: [] ,owner: ''}); // 当前相册，初始包含 name 属性
+    const currentAlbum = ref({ name: '', images: [] ,owner: '', thumbs: 0,favorites: 0,recommends: 0,like : false,favorite : false,recommend : false}); // 当前相册，初始包含 name 属性
    
 
-    const album = ref([]);
+    const album1 = ref([]);
     const createAlbumVisible = ref(false); // 控制弹窗显示
     const newAlbum = ref({ name: '' }); // 新相册数据
 
@@ -136,7 +169,7 @@ export default {
     const coverImage = ref(null); // 定义封面图片变量
 
     return {
-      album,
+      album1,
       newAlbum,
       dialogVisible,
       currentAlbum,
@@ -150,13 +183,107 @@ export default {
       albums: [], // 初始化为空数组
       activeIndex2: '1', // 当前活动的菜单项
       comment: '', // 存储当前输入的评论
-      comments: []  // 存储之前的评论
+      comments: [],  // 存储之前的评论
     };
   },
   mounted() {
-    this.fetchAlbums(); // 组件挂载后获取相册数据
+    // this.fetchAlbums(); // 组件挂载后获取相册数据
+    this.fetchAlbumsWithLike();
+    console.log(this.albums)
   },
   methods: {
+    goToFav(){
+      this.$router.push("/favorite")
+    },
+    async submitComment() {
+      console.log("发表评论")
+      if (this.comment) {
+        const albumCommentDto = {
+          album_name: this.currentAlbum.name, // 当前相册的名称
+          commenter: this.currentUser.name, // 当前用户的名称
+          comment: this.comment // 用户输入的评论
+        };
+
+        try {
+          const response = await axios.post('http://localhost:8085/comment/add', albumCommentDto);
+
+          if (response.data.code === 1) {
+            // 添加成功后，将新评论添加到评论数组中
+            this.comments.push({
+              commenter: this.currentUser.name,
+              comment: this.comment
+            });
+            this.comment = ''; // 清空评论输入框
+          } else {
+            this.$message.error(`添加评论失败: ${response.data.msg}`);
+          }
+        } catch (error) {
+          console.error(error);
+          this.$message.error('提交评论时出错');
+        }
+      } else {
+        this.$message.warning('请输入评论内容');
+      }
+    },
+    toggleLike(album) {
+      console.log("点赞相册" + album.albumName)
+      console.log("点赞前:" + album.like)
+      if (!album.like) {
+        console.log("点赞后:" + !album.like)
+         // 发送请求到后端进行点赞操作
+        axios.post('http://localhost:8085/photo/likeAlbum', null, {
+          params: { albumName : album.albumName, username : this.currentUser.name, albumOwner: album.owner}
+        })
+        .then(() => {
+            this.fetchAlbumsWithLike();
+        })
+      }else{
+        axios.post('http://localhost:8085/photo/dislikeAlbum', null, {
+          params: { albumName : album.albumName, username : this.currentUser.name, albumOwner: album.owner}
+        })
+        .then(() => {
+            this.fetchAlbumsWithLike();
+        })
+      }
+    },
+    toggleFavorite(album) {
+      if (!album.favorite) {
+        // console.log("点赞后:" + !album.favorite)
+         // 发送请求到后端进行点赞操作
+        axios.post('http://localhost:8085/photo/favAlbum', null, {
+          params: { albumName : album.albumName, username : this.currentUser.name, albumOwner: album.owner}
+        })
+        .then(() => {
+            this.fetchAlbumsWithLike();
+        })
+      }else{
+        axios.post('http://localhost:8085/photo/disfavAlbum', null, {
+          params: { albumName : album.albumName, username : this.currentUser.name, albumOwner: album.owner}
+        })
+        .then(() => {
+            this.fetchAlbumsWithLike();
+        })
+      }
+    },
+    toggleRecommend(album) {
+      if (!album.recommend) {
+        // console.log("点赞后:" + !album.like)
+         // 发送请求到后端进行点赞操作
+        axios.post('http://localhost:8085/admin/recommend', null, {
+          params: { albumName : album.albumName, username : this.currentUser.name, albumOwner: album.owner}
+        })
+        .then(() => {
+            this.fetchAlbumsWithLike();
+        })
+      }else{
+        axios.post('http://localhost:8085/admin/disRecommend', null, {
+          params: { albumName : album.albumName, username : this.currentUser.name, albumOwner: album.owner}
+        })
+        .then(() => {
+            this.fetchAlbumsWithLike();
+        })
+      }
+    },
     goToManage(){
       this.$router.push("/manage")
     },
@@ -175,6 +302,22 @@ export default {
         const response = await axios.get('http://localhost:8085/photo/getAll'); // 向后端发送请求
         if (response.data.code === 1) {
           this.albums = response.data.data; // 更新相册数据
+        } else {
+          this.$message.error(`获取相册失败: ${response.data.msg}`);
+        }
+      } catch (error) {
+        console.error(error);
+        this.$message.error('获取相册数据时出错');
+      }
+    },
+    async fetchAlbumsWithLike() {
+      try {
+        const response = await axios.post('http://localhost:8085/photo/getAll_user',null,{
+          params: { username : this.currentUser.name }
+        }); // 向后端发送请求
+        if (response.data.code === 1) {
+          this.albums = response.data.data; // 更新相册数据
+          console.log(this.albums)
         } else {
           this.$message.error(`获取相册失败: ${response.data.msg}`);
         }
@@ -333,6 +476,11 @@ export default {
 }
 
 .album-title {
+  font-size: 18px; /* 相册名称字体大小 */
+  margin-bottom: 10px; /* 相册名称与图片的间距 */
+}
+
+.album-data {
   font-size: 18px; /* 相册名称字体大小 */
   margin-bottom: 10px; /* 相册名称与图片的间距 */
 }

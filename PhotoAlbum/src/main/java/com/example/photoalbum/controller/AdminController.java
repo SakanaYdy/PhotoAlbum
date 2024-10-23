@@ -3,6 +3,7 @@ package com.example.photoalbum.controller;
 import com.example.photoalbum.common.dto.AlbumDto;
 import com.example.photoalbum.common.dto.DeleteAlbumDto;
 import com.example.photoalbum.common.dto.DeleteComment;
+import com.example.photoalbum.common.po.Album;
 import com.example.photoalbum.common.po.Comment;
 import com.example.photoalbum.common.po.Notice;
 import com.example.photoalbum.common.res.Result;
@@ -45,6 +46,29 @@ public class AdminController {
     public Result<DeleteComment> deleteComment(@RequestBody DeleteComment deleteComment){
         log.info("删除评论:{}",deleteComment.getAlbum_name());
         return albumCommentService.deleteComment(deleteComment);
+    }
+
+    /**
+     * 管理员推荐
+     */
+    @PostMapping("/recommend")
+    public Result<Album> recommend(@RequestParam String albumName,
+                                   @RequestParam String username,
+                                   @RequestParam String albumOwner){
+        log.info("{}推荐{}",username,albumName);
+        return albumService.addRecommend(albumName,username,albumOwner);
+    }
+
+    /**
+     * 管理员取消推荐
+     * @param albumName
+     * @return
+     */
+    @PostMapping("/disRecommend")
+    public Result<Album> disRecommend(@RequestParam String albumName,
+                                      @RequestParam String username,
+                                      @RequestParam String albumOwner){
+        return albumService.deleteRecommend(albumName,username,albumOwner);
     }
 
 }

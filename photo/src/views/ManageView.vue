@@ -15,14 +15,7 @@
             <el-sub-menu index="2">
               <template #title>相册管理</template>
               <el-menu-item index="2-1">相册类别</el-menu-item>
-              <el-menu-item index="2-2">item two</el-menu-item>
-              <el-menu-item index="2-3">item three</el-menu-item>
-              <el-sub-menu index="2-4">
-                <template #title>item four</template>
-                <el-menu-item index="2-4-1">item one</el-menu-item>
-                <el-menu-item index="2-4-2">item two</el-menu-item>
-                <el-menu-item index="2-4-3">item three</el-menu-item>
-              </el-sub-menu>
+              <el-menu-item index="2-2">相册维护</el-menu-item>
             </el-sub-menu>
             <el-menu-item index="3" @click="goToPerson">个人相册</el-menu-item>
             <el-menu-item index="4" @click="logout">登出</el-menu-item>
@@ -37,40 +30,56 @@
   
         <!-- 多个相册显示 -->
         <el-main>
-            <div class="block text-center">
-                <span class="demonstration">相册展示</span>
-                <el-row :gutter="20">
-                <el-col v-for="(album, index) in albums" :key="index" :span="8">
-                    <div class="album" @click="openAlbum(album)" :class="album-container">
-                        <h3 class="album-title">
-                            {{ album.albumName }}{{ album.owner }}
-                            <el-button 
-                                type="danger" 
-                                icon="el-icon-delete" 
-                                @click.stop="openDeleteDialog(album)"
-                                size="mini" 
-                                style="margin-left: 10px; display: inline-flex; align-items: center;">
-                                删除
-                            </el-button>
-                        </h3>
-                    <img v-if="album.avatar_url" :src="album.avatar_url" alt="Album Cover" class="album-cover"/>
-                    </div>
-                </el-col>
-                </el-row>
+      <div class="block text-center">
+        <span class="demonstration">相册展示</span>
+        <el-row :gutter="20">
+          <el-col v-for="(album, index) in albums" :key="index" :span="8">
+            <div class="album" @click="openAlbum(album)" :class="album-container">
+              <h3 class="album-title">{{ album.albumName }}  {{ album.owner }}</h3>
+              <img v-if="album.avatar_url" :src="album.avatar_url" alt="Album Cover" class="album-cover"/>
             </div>
-        </el-main>
+            <el-icon><Pointer /></el-icon>
+            <el-icon><Star /></el-icon>
+            <el-icon><StarFilled /></el-icon>
+            <el-row :gutter="20">
+              <el-col :span="6">
+                
+                <!-- :disabled="album.recommend"  -->
+                <el-button 
+                    type="success" 
+                    @click="toggleRecommend(album)" 
+                    :style="{ backgroundColor : album.recommend ? '#d9d9d9' : '' }">
+                    推荐
+                </el-button>
+                <div class="grid-content ep-bg-purple">推荐数：{{ album.recommends }}</div>
+              </el-col>
+              <el-col :span="6">
+                <div class="grid-content ep-bg-purple"></div>
+                <!-- :disabled="album.recommend"  -->
+                <el-button 
+                    type="success" 
+                    @click="openDeleteDialog(album)" >
+                    删除
+                </el-button>
+              </el-col>
+              <el-col :span="6">
+                <div class="grid-content ep-bg-purple" />
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
+      </div>
+    </el-main>
       </el-container>
 
-      <el-dialog title="确认删除" v-model="deleteDialogVisible">
-        <span>请输入删除原因：</span>
+      <el-dialog title="确认删除相册" v-model="deleteDialogVisible">
+        <span>请输入删除相册原因：</span>
         <el-input v-model="deleteReason" placeholder="删除原因"></el-input>
         <template v-slot:footer>
             <el-button @click="deleteDialogVisible = false">取 消</el-button>
             <el-button type="danger" @click="confirmDelete()">确 定</el-button>
         </template>
     </el-dialog>
-
-      
   
      <!-- 弹窗 -->
      <el-dialog
@@ -90,14 +99,34 @@
         </div>
         
         <div class="comment-section">  
-          <!-- 显示之前的评论 -->
-          <div class="previous-comments" v-if="comments.length > 0" style="margin-top: 20px;">
-            <h4>之前的评论:</h4>
-            <el-card v-for="(prevComment, index) in comments" :key="index" class="comment-card">
-              <div><strong>{{ prevComment.commenter }}:</strong> {{ prevComment.comment }}</div>
-            </el-card>
-          </div>
+        <!-- 显示之前的评论 -->
+        <div class="previous-comments" v-if="comments.length > 0" style="margin-top: 20px;">
+          <h4>之前的评论:</h4>
+          <el-card v-for="(prevComment, index) in comments" :key="index" class="comment-card">
+            <div>
+              <strong>{{ prevComment.commenter }}:</strong> {{ prevComment.comment }}
+              <el-icon  @click.stop="openDeleteComment(prevComment)"><Delete /></el-icon>
+              <el-button 
+                type="danger" 
+                size="mini" 
+                @click.stop="openDeleteComment(prevComment)"
+                style="margin-left: 10px;">
+                删除
+              </el-button>
+            </div>
+          </el-card>
         </div>
+      </div>
+
+      <el-dialog title="确认删除评论" v-model="deleteCommentVisible">
+        <span>请输入删除评论原因：</span>
+        <el-input v-model="deleteReason" placeholder="删除原因"></el-input>
+        <template v-slot:footer>
+            <el-button @click="deleteCommentVisible = false">取 消</el-button>
+            <el-button type="danger" @click="confirmDeleteComment()">确 定</el-button>
+        </template>
+    </el-dialog>
+
         
         <input
           type="file"
@@ -132,7 +161,7 @@
       const currentAlbum = ref({ name: '', images: [] ,owner: ''}); // 当前相册，初始包含 name 属性
      
   
-      const album = ref([]);
+      const album1 = ref([]);
       const createAlbumVisible = ref(false); // 控制弹窗显示
       const newAlbum = ref({ name: '' }); // 新相册数据
   
@@ -144,7 +173,7 @@
       const coverImage = ref(null); // 定义封面图片变量
   
       return {
-        album,
+        album1,
         newAlbum,
         dialogVisible,
         currentAlbum,
@@ -156,17 +185,102 @@
     data() {
       return {
         albums: [], // 初始化为空数组
-        activeIndex2: '1', // 当前活动的菜单项
+        activeIndex2: '2-2', // 当前活动的菜单项
         comment: '', // 存储当前输入的评论
         comments: [],  // 存储之前的评论
         deleteReason: '', // 删除原因
         deleteDialogVisible: false, // 控制弹窗的显示
+        deleteCommentVisible: false
       };
     },
     mounted() {
-      this.fetchAlbums(); // 组件挂载后获取相册数据
+      this.fetchAlbumsWithLike(); // 组件挂载后获取相册数据
     },
     methods: {
+      toggleRecommend(album) {
+      if (!album.recommend) {
+        // console.log("点赞后:" + !album.like)
+         // 发送请求到后端进行点赞操作
+        axios.post('http://localhost:8085/admin/recommend', null, {
+          params: { albumName : album.albumName, username : this.currentUser.name, albumOwner: this.currentAlbum.owner}
+        })
+        .then(() => {
+            this.fetchAlbumsWithLike();
+        })
+      }else{
+        axios.post('http://localhost:8085/admin/disRecommend', null, {
+          params: { albumName : album.albumName, username : this.currentUser.name, albumOwner: this.currentAlbum.owner}
+        })
+        .then(() => {
+            this.fetchAlbumsWithLike();
+        })
+      }
+    },
+    async fetchAlbumsWithLike() {
+      try {
+        const response = await axios.post('http://localhost:8085/photo/getAll_user',null,{
+          params: { username : this.currentUser.name }
+        }); // 向后端发送请求
+        if (response.data.code === 1) {
+          this.albums = response.data.data; // 更新相册数据
+          console.log(this.albums)
+        } else {
+          this.$message.error(`获取相册失败: ${response.data.msg}`);
+        }
+      } catch (error) {
+        console.error(error);
+        this.$message.error('获取相册数据时出错');
+      }
+    },
+      // 删除评论
+      deleteComment(comment,reason) {
+        console.log("删除评论内容:" + comment.comment + "原因:" + reason + "相册名:" + this.currentAlbum.name) 
+        this.$confirm('确定要删除这条评论吗?', '警告', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          const deleteCommentDto = {
+            album_name: this.currentAlbum.name, // 当前评论信息
+            commenter: comment.commenter,
+            comment: comment.comment,
+            maker: this.currentUser.name,
+            reason: reason,
+        };
+          // 调用 API 删除评论
+          axios.post('http://localhost:8085/admin/deleteComment', deleteCommentDto)
+          .then(() => {
+            this.$message.success('删除成功');
+            this.fetchPhotosWithComments(this.currentAlbum.name)
+            // 从本地数组中删除评论
+            // this.comments.splice(index, 1);
+          })
+        }).catch(() => {
+          this.$message.info('已取消删除');
+        });
+      },
+      openDeleteComment(comment) {
+          console.log("删除评论 所有者" + comment.commenter)
+          this.commentToDelete = comment; // 保存待删除相册
+          
+          this.deleteCommentVisible = true; // 显示弹窗
+          this.deleteReason = ''; // 清空输入框
+      },
+      confirmDeleteComment() {
+        if (this.deleteReason.trim() === '') {
+            this.$message.error('请填写删除原因');
+            return;
+        }
+        
+        // 这里可以添加你的删除逻辑，比如调用 API
+        // 假设你有一个删除相册的方法 deleteAlbum(album)
+        // console.log("评论所有者：" + this.commentToDelete.commenter);
+        this.deleteComment(this.commentToDelete, this.deleteReason);
+        
+        this.deleteCommentVisible = false; // 关闭弹窗
+        this.commentToDelete = null; // 清空待删除相册
+    },
+
       openDeleteDialog(album) {
         console.log("删除相册 所有者" + album.owner)
         this.albumToDelete = album; // 保存待删除相册
@@ -174,7 +288,7 @@
         this.deleteDialogVisible = true; // 显示弹窗
         this.deleteReason = ''; // 清空输入框
     },
-    confirmDelete() {
+      confirmDelete() {
         if (this.deleteReason.trim() === '') {
             this.$message.error('请填写删除原因');
             return;

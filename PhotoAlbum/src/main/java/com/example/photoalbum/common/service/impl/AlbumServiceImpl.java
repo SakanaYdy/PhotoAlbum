@@ -1,24 +1,27 @@
 package com.example.photoalbum.common.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.photoalbum.common.dto.AlbumDto;
 import com.example.photoalbum.common.dto.AlbumPhotosDto;
 import com.example.photoalbum.common.dto.DeleteAlbumDto;
+import com.example.photoalbum.common.dto.UserLikeAlbum;
 import com.example.photoalbum.common.po.Album;
 import com.example.photoalbum.common.po.Comment;
 import com.example.photoalbum.common.po.Notice;
+import com.example.photoalbum.common.po.Usertoalbum;
 import com.example.photoalbum.common.res.Result;
 import com.example.photoalbum.common.service.AlbumService;
 import com.example.photoalbum.common.service.NoticeService;
 import com.example.photoalbum.mapper.AlbumCommentMapper;
 import com.example.photoalbum.mapper.AlbumMapper;
 import com.example.photoalbum.mapper.PhotoMapper;
+import com.example.photoalbum.mapper.UsertoalbumMapper;
 import com.example.photoalbum.utils.AliOssUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -49,6 +52,9 @@ public class AlbumServiceImpl extends ServiceImpl<AlbumMapper, Album>
 
     @Resource
     private NoticeService noticeService;
+
+    @Resource
+    private UsertoalbumMapper usertoalbumMapper;
 
     @Override
     public Result<Album> createAlbum(AlbumDto albumDto, MultipartFile avatar) throws IOException {
@@ -145,6 +151,147 @@ public class AlbumServiceImpl extends ServiceImpl<AlbumMapper, Album>
         noticeService.addNotice(notice);
 
         return Result.success(deleteAlbumDto);
+    }
+
+    @Override
+    public Result<Album> likeAlbum(String albumName, String username, String albumOwner) {
+
+        check(albumName,username);
+        albumMapper.addLike(albumName);
+        usertoalbumMapper.changeLike(albumName,username);
+        Album album = new Album();
+        album.setAlbumName(albumName);
+
+        // 点赞之后通知用户
+        makeNotice(albumName,username,albumOwner,"点赞");
+
+        return Result.success(album);
+    }
+
+    @Override
+    public Result<Album> dislikeAlbum(String albumName,String username,String albumOwner) {
+
+        check(albumName,username);
+
+        albumMapper.deleteLike(albumName);
+        usertoalbumMapper.changeLike(albumName,username);
+        Album album = new Album();
+        album.setAlbumName(albumName);
+
+        makeNotice(albumName,username,albumOwner,"取消点赞");
+
+        return Result.success(album);
+    }
+
+    @Override
+    public Result<Album> disfavAlbum(String albumName,String username,String albumOwner) {
+
+        check(albumName,username);
+
+        albumMapper.deleteFav(albumName);
+        usertoalbumMapper.changeFav(albumName,username);
+        Album album = new Album();
+        album.setAlbumName(albumName);
+        makeNotice(albumName,username,albumOwner,"取消收藏");
+        return Result.success(album);
+    }
+
+    @Override
+    public Result<Album> favAlbum(String albumName,String username,String albumOwner) {
+        check(albumName,username);
+
+        albumMapper.addFav(albumName);
+        usertoalbumMapper.changeFav(albumName,username);
+        Album album = new Album();
+        album.setAlbumName(albumName);
+        makeNotice(albumName,username,albumOwner,"收藏");
+        return Result.success(album);
+    }
+
+    @Override
+    public Result<Album> addRecommend(String albumName,String username,String albumOwner) {
+
+        check(albumName,username);
+
+        albumMapper.addRecommend(albumName);
+        usertoalbumMapper.changeRecommend(albumName,username);
+        Album album = new Album();
+        album.setAlbumName(albumName);
+        makeNotice(albumName,username,albumOwner,"推荐");
+        return Result.success(album);
+    }
+
+    @Override
+    public Result<Album> deleteRecommend(String albumName,String username,String albumOwner) {
+        check(albumName,username);
+
+        albumMapper.deleteRecommend(albumName);
+        usertoalbumMapper.changeRecommend(albumName,username);
+        Album album = new Album();
+        album.setAlbumName(albumName);
+        makeNotice(albumName,username,albumOwner,"取消推荐");
+        return Result.success(album);
+    }
+
+    @Override
+    public Result<List<UserLikeAlbum>> getAllAlbumWithUser(String username) {
+
+        List<Album> albums = albumMapper.getAll();
+        List<UserLikeAlbum> ans = new ArrayList<>();
+        for(var album : albums){
+            String albumName = album.getAlbumName();
+            Usertoalbum usertoalbum =  usertoalbumMapper.getLikes(username,albumName);
+            UserLikeAlbum userLikeAlbum = new UserLikeAlbum();
+            BeanUtil.copyProperties(album,userLikeAlbum);
+            BeanUtil.copyProperties(usertoalbum,userLikeAlbum);
+            ans.add(userLikeAlbum);
+        }
+        return Result.success(ans);
+    }
+
+    @Override
+    public Result<List<UserLikeAlbum>>  getFavoriteAlbum(String username) {
+        List<String> albumNames = usertoalbumMapper.getFavAlbum(username);
+        List<Album> res = new ArrayList<>();
+        for(var albumName : albumNames){
+            Album album = albumMapper.getByAlbumName(albumName);
+            res.add(album);
+        }
+
+        List<UserLikeAlbum> ans = new ArrayList<>();
+        for(var album : res){
+            String albumName = album.getAlbumName();
+            Usertoalbum usertoalbum =  usertoalbumMapper.getLikes(username,albumName);
+            UserLikeAlbum userLikeAlbum = new UserLikeAlbum();
+            BeanUtil.copyProperties(album,userLikeAlbum);
+            BeanUtil.copyProperties(usertoalbum,userLikeAlbum);
+            ans.add(userLikeAlbum);
+        }
+        return Result.success(ans);
+
+//        return Result.success(ans);
+    }
+
+    public void makeNotice(String albumName,String username,String albumOwner,String label){
+        log.info("消息to{}",albumOwner);
+        // 点赞之后通知用户
+        Notice notice = new Notice();
+        notice.setTime(LocalDateTime.now());
+        notice.setFrom(username);
+        notice.setTo(albumOwner);
+        notice.setNotice(username + label + "了你的 " + albumName + " 相册");
+
+        noticeService.addNotice(notice);
+    }
+
+    public void check(String albumName,String username){
+        log.info("检查是否有记录 ------------");
+        // 如果原来没有记录，需要先添加记录
+        Usertoalbum likes = usertoalbumMapper.getLikes(username,albumName);
+        if(likes == null){
+            Usertoalbum t = new Usertoalbum(username,albumName,0,0,0);
+            usertoalbumMapper.insertLikes(t);
+        }
     }
 }
 
