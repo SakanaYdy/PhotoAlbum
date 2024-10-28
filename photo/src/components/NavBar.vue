@@ -12,11 +12,12 @@
           @select="handleSelect"
         >
           <el-menu-item index="1" @click="toHome">首页</el-menu-item>
-          <el-sub-menu index="2">
+         <!-- <el-sub-menu index="2" v-if="currentUser.role == 'admin'">
             <template #title>相册管理</template>
             <el-menu-item index="2-1">相册类别</el-menu-item>
             <el-menu-item index="2-2" @click="goToManage">相册维护</el-menu-item>
-          </el-sub-menu>
+          </el-sub-menu> -->
+          <el-menu-item index="2" v-if="currentUser.role == 'admin'" @click="goToManage">相册管理</el-menu-item>
           <el-menu-item index="3" @click="goToPerson">个人相册</el-menu-item>
           <el-menu-item index="4" @click="logout">登出</el-menu-item>
           <el-menu-item index="5" @click="goToNOtice">
@@ -25,6 +26,7 @@
           <el-menu-item index="6" @click="goToFav">收藏</el-menu-item>
           <el-menu-item index="7">
             <div v-if="currentUser">{{ currentUser.name }}</div>
+            <!-- <div v-if="currentUser">{{ currentUser.role }}</div> -->
           </el-menu-item>
         </el-menu>
       </el-header>
@@ -36,7 +38,12 @@
         <el-row :gutter="20">
           <el-col v-for="(album, index) in albums" :key="index" :span="8">
             <div class="album" @click="openAlbum(album)" :class="album-container">
-              <h3 class="album-title">{{ album.albumName }}  {{ album.owner }}</h3>
+              <!-- <h3 class="album-title" >相册名: {{ album.albumName }}  创建者： {{ album.owner }}</h3> -->
+              <div class="album-header">
+                  <h3 class="album-title">相册名: {{ album.albumName }}</h3>
+                  <span class="album-owner">创建者：{{ album.owner }}</span>
+              </div>
+
               <img v-if="album.avatar_url" :src="album.avatar_url" alt="Album Cover" class="album-cover"/>
             </div>
             <el-icon><Pointer /></el-icon>
@@ -132,7 +139,7 @@
       
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="addImage" type="primary">添加图片</el-button>
+          <!-- <el-button @click="addImage" type="primary">添加图片</el-button> -->
           <el-button @click="dialogVisible = false">关闭</el-button>
         </div>
       </template>
@@ -463,6 +470,12 @@ export default {
 
 <style scoped>
 
+
+.album-header {
+    display: flex;
+    justify-content: space-between; /* 左右两侧对齐 */
+    align-items: center; /* 垂直居中对齐 */
+}
 .album-container {
   border: 1px solid #e4e7ed; /* 添加边框 */
   border-radius: 8px; /* 圆角 */
@@ -478,6 +491,7 @@ export default {
 .album-title {
   font-size: 18px; /* 相册名称字体大小 */
   margin-bottom: 10px; /* 相册名称与图片的间距 */
+  margin: 0;
 }
 
 .album-data {

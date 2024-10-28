@@ -49,6 +49,7 @@
                         this.successMessage = '登录成功！';
                         this.$store.dispatch('login', response.data.data); // 登录成功后存储用户信息
                         this.errorMessage = '';
+                        console.log(response.data.data)
                         this.goToHome();
                         // 处理成功后的数据，例如保存用户信息
                     } else {

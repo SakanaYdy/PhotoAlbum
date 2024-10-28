@@ -55,7 +55,7 @@ public class AdminController {
     public Result<Album> recommend(@RequestParam String albumName,
                                    @RequestParam String username,
                                    @RequestParam String albumOwner){
-        log.info("{}推荐{}",username,albumName);
+        log.info("{}推荐{}的{}相册",username,albumOwner,albumName);
         return albumService.addRecommend(albumName,username,albumOwner);
     }
 

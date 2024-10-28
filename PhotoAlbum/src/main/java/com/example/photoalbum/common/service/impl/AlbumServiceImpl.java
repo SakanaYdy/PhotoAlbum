@@ -259,17 +259,20 @@ public class AlbumServiceImpl extends ServiceImpl<AlbumMapper, Album>
         }
 
         List<UserLikeAlbum> ans = new ArrayList<>();
+        if(res.size() == 0)  return Result.success(null);
+
         for(var album : res){
-            String albumName = album.getAlbumName();
-            Usertoalbum usertoalbum =  usertoalbumMapper.getLikes(username,albumName);
-            UserLikeAlbum userLikeAlbum = new UserLikeAlbum();
-            BeanUtil.copyProperties(album,userLikeAlbum);
-            BeanUtil.copyProperties(usertoalbum,userLikeAlbum);
-            ans.add(userLikeAlbum);
+            if(album != null){
+                String albumName = album.getAlbumName();
+                Usertoalbum usertoalbum =  usertoalbumMapper.getLikes(username,albumName);
+                UserLikeAlbum userLikeAlbum = new UserLikeAlbum();
+                BeanUtil.copyProperties(album,userLikeAlbum);
+                BeanUtil.copyProperties(usertoalbum,userLikeAlbum);
+                ans.add(userLikeAlbum);
+            }
         }
         return Result.success(ans);
 
-//        return Result.success(ans);
     }
 
     public void makeNotice(String albumName,String username,String albumOwner,String label){
