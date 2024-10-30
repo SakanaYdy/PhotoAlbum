@@ -56,6 +56,11 @@ const routes = [
     path: '/manageLabel',
     name: 'manageLabel',
     component: () => import(/* webpackChunkName: "about" */ '../views/ManageLabel.vue')
+  },
+  {
+    path: '/personalInfo',
+    name: 'personalInfo',
+    component: () => import(/* webpackChunkName: "about" */ '../views/PersonalInfo.vue')
   }
 ]
 

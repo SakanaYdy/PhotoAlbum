@@ -25,7 +25,7 @@
             <el-icon><Bell />通知</el-icon>
           </el-menu-item>
           <el-menu-item index="6" @click="goToFav">收藏</el-menu-item>
-          <el-menu-item index="7">
+          <el-menu-item index="7" @click="goToInfo">
             <div v-if="currentUser">{{ currentUser.name }}</div>
             <!-- <div v-if="currentUser">{{ currentUser.role }}</div> -->
           </el-menu-item>
@@ -201,11 +201,14 @@ export default {
   },
   methods: {
     goToManageLabel(){
-            this.$router.push("/manageLabel")
-        },
-        goToManageUser(){
-            this.$router.push("/manageUser")
-        },
+        this.$router.push("/manageLabel")
+    },
+    goToManageUser(){
+        this.$router.push("/manageUser")
+    },
+    goToInfo(){
+        this.$router.push("/personalInfo")
+    },  
     goToFav(){
       this.$router.push("/favorite")
     },
