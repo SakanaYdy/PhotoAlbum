@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com/example/photoalbum/mapper")
+@MapperScan("com.example.photoalbum.mapper")
 public class PhotoAlbumApplication {
 
     public static void main(String[] args) {

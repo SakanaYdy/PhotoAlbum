@@ -10,10 +10,12 @@ import com.example.photoalbum.common.service.AlbumCommentService;
 import com.example.photoalbum.common.service.NoticeService;
 import com.example.photoalbum.mapper.AlbumCommentMapper;
 import com.example.photoalbum.mapper.NoticeMapper;
-import jakarta.annotation.Resource;
+//import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+
+import jakarta.annotation.Resource;
 import java.time.LocalDateTime;
 
 /**

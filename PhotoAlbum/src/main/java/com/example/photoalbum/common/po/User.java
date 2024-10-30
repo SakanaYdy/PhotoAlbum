@@ -42,6 +42,9 @@ public class User implements Serializable {
      */
     private String email;
 
+    // 0 表示正常  1 表示被封号
+    private Integer status;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 

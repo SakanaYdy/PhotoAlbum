@@ -1,9 +1,8 @@
 package com.example.photoalbum.common.service.impl;
 
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.digest.DigestUtil;
-import cn.hutool.crypto.digest.MD5;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.photoalbum.common.dto.ManageUser;
 import com.example.photoalbum.common.dto.UserDto;
 import com.example.photoalbum.common.po.User;
 import com.example.photoalbum.common.res.Result;
@@ -13,9 +12,10 @@ import com.example.photoalbum.mapper.UserMapper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import java.util.*;
 
 /**
 * @author 杨大宇
@@ -75,6 +75,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         res.setRole("user");
 
         return Result.success(res);
+    }
+
+    @Override
+    public Result<List<ManageUser>> getAllUser() {
+
+        List<User> users = userMapper.getAllUser();
+
+        // 脱敏
+        List<ManageUser> res = new ArrayList<>();
+        for(var user : users) {
+            ManageUser manageUser = new ManageUser();
+            BeanUtils.copyProperties(user, manageUser);
+            res.add(manageUser);
+        }
+        return Result.success(res);
+    }
+
+    @Override
+    public Result<String> changeUser(String username) {
+        userMapper.changeUser(username);
+        return Result.success(username);
     }
 }
 

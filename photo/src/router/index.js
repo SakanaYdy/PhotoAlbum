@@ -46,6 +46,16 @@ const routes = [
     path: '/favorite',
     name: 'favorite',
     component: () => import(/* webpackChunkName: "about" */ '../views/FavoriteView.vue')
+  },
+  {
+    path: '/manageUser',
+    name: 'manageUser',
+    component: () => import(/* webpackChunkName: "about" */ '../views/ManageUser.vue')
+  },
+  {
+    path: '/manageLabel',
+    name: 'manageLabel',
+    component: () => import(/* webpackChunkName: "about" */ '../views/ManageLabel.vue')
   }
 ]
 

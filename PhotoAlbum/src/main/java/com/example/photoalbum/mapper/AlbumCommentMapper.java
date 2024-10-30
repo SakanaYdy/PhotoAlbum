@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.photoalbum.common.po.Comment;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 * @createDate 2024-10-19 20:33:56
 * @Entity com.example.photoalbum.common.po.AlbumComment
 */
+
 public interface AlbumCommentMapper extends BaseMapper<AlbumComment> {
 
     @Select("select commenter,comment from PhotoAlbum.album_comment where album_name = #{albumName}")

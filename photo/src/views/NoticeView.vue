@@ -12,12 +12,13 @@
           @select="handleSelect"
         >
           <el-menu-item index="1" @click="toHome">首页</el-menu-item>
-         <!-- <el-sub-menu index="2" v-if="currentUser.role == 'admin'">
-            <template #title>相册管理</template>
-            <el-menu-item index="2-1">相册类别</el-menu-item>
-            <el-menu-item index="2-2" @click="goToManage">相册维护</el-menu-item>
-          </el-sub-menu> -->
-          <el-menu-item index="2" v-if="currentUser.role == 'admin'" @click="goToManage">相册管理</el-menu-item>
+          <el-sub-menu index="2" v-if="currentUser.role == 'admin'">
+            <template #title>管理页面</template>
+            <el-menu-item index="2-1" @click="goToManageLabel">类别管理</el-menu-item>
+            <el-menu-item index="2-2" @click="goToManageAlbum">相册管理</el-menu-item>
+            <el-menu-item index="2-3" @click="goToManageUser">用户管理</el-menu-item>
+          </el-sub-menu>
+          <!-- <el-menu-item index="2" v-if="currentUser.role == 'admin'" @click="goToManageAlbum">相册管理</el-menu-item> -->
           <el-menu-item index="3" @click="goToPerson">个人相册</el-menu-item>
           <el-menu-item index="4" @click="logout">登出</el-menu-item>
           <el-menu-item index="5" @click="goToNotifications">

@@ -5,6 +5,9 @@ import com.example.photoalbum.common.po.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 /**
 * @author 杨大宇
@@ -19,6 +22,12 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Insert("insert into user (name,password,role) values (#{name},#{password},#{role})")
     void addUser(User user);
+
+    @Select("select * from user")
+    List<User> getAllUser();
+
+    @Update("update PhotoAlbum.user set status = 1  - user.status where name = #{username}")
+    void changeUser(String username);
 }
 
 
