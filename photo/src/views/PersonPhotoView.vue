@@ -44,7 +44,7 @@
             <!-- <h3 class="album-title">{{ album.albumName }}</h3> 显示相册名称 -->
             <div class="album-header">
                   <h3 class="album-title">相册名: {{ album.albumName }}</h3>
-                  <span class="album-owner">创建者：{{ album.owner }}</span>
+                  <span class="album-owner">类别：{{ album.label }}</span>
               </div>
             <img v-if="album.avatar_url" :src="album.avatar_url" alt="Album Cover" class="album-cover"/>
           </div>
@@ -60,6 +60,17 @@
         <el-form-item label="相册名称" :label-width="formLabelWidth">
           <el-input v-model="newAlbum.name" placeholder="请输入相册名称"></el-input>
         </el-form-item>
+
+        <el-form-item label="相册类别" :label-width="formLabelWidth">
+        <el-select v-model="newAlbum.label" placeholder="请选择相册类别">
+          <el-option
+            v-for="label in labels"
+            :key="label.labelName"
+            :label="label.labelName"
+            :value="label.labelName"
+          ></el-option>
+        </el-select>
+      </el-form-item>
 
         <el-form-item label="封面图片">
           <el-upload
@@ -185,6 +196,7 @@ export default {
   data() {
     return {
       albums: [], // 初始化为空数组
+      labels: [],
       activeIndex2: '3', // 当前活动的菜单项
       comment: '', // 存储当前输入的评论
       comments: []  // 存储之前的评论
@@ -192,8 +204,22 @@ export default {
   },
   mounted() {
     this.fetchAlbums(); // 组件挂载后获取相册数据
+    this.fetchLabels(); // 组件挂载时请求类别数据
   },
   methods: {
+    async fetchLabels() {
+            try {
+                const response = await axios.get('http://localhost:8085/admin/label'); // 向后端发送请求
+                if (response.data.code === 1) {
+                    this.labels = response.data.data; // 更新相册数据
+                } else {
+                this.$message.error(`获取用户列表失败: ${response.data.msg}`);
+                }
+            } catch (error) {
+                console.error(error);
+                this.$message.error('获取用户列表失败');
+            }
+        },
     goToFav(){
       this.$router.push("/favorite")
     },

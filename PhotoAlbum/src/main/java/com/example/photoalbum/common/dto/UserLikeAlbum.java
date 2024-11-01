@@ -32,4 +32,6 @@ public class UserLikeAlbum {
 
     private boolean recommend;
 
+    private String label;
+
 }

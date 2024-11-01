@@ -54,6 +54,10 @@ public class Album implements Serializable {
      * 
      */
     private Integer recommends;
+    /**
+     * 相册类别
+     */
+    private String label;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

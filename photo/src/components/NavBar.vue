@@ -51,7 +51,7 @@
             <el-icon><Star /></el-icon>
             <el-icon><StarFilled /></el-icon>
             <el-row :gutter="20">
-              <el-col :span="10">
+              <el-col :span="6">
                 <div class="grid-content ep-bg-purple">点赞数: {{ album.thumbs }}</div>
                 <!-- :disabled="album.like"  -->
                 <el-button 
@@ -61,7 +61,7 @@
                     点赞
                 </el-button>
               </el-col>
-              <el-col :span="10">
+              <el-col :span="6">
                 <div class="grid-content ep-bg-purple">收藏数：{{ album.favorites }}</div>
                 <!-- :disabled="album.favorite"  -->
                 <el-button 
@@ -70,6 +70,10 @@
                     :style="{ backgroundColor: album.favorite ? '#d9d9d9' : '' }">
                     收藏
                 </el-button>
+              </el-col>
+              <el-col :span="6">
+                <div class="grid-content ep-bg-purple">类别：{{ album.label }}</div>
+              
               </el-col>
               <!-- <el-col :span="6">
                 <div class="grid-content ep-bg-purple">推荐数：{{ album.recommends }}</div>
