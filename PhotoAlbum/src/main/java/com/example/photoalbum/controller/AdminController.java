@@ -93,6 +93,7 @@ public class AdminController {
      */
     @PostMapping("/changeUser")
     public Result<String> changeUser(@RequestParam String username){
+        log.info("修改用户状态:" + username);
         return userService.changeUser(username);
     }
 
@@ -111,11 +112,13 @@ public class AdminController {
      */
     @PostMapping("/changeLabel")
     public Result<String> changeLabel(@RequestParam String labelName){
+        log.info("修改label状态:"  + labelName);
         return labelService.changeLabel(labelName);
     }
 
     @PostMapping("/addLabel")
     public Result<Label> addLabel(@RequestParam String labelName){
+        log.info("新建label:" + labelName);
         return labelService.addLabel(labelName);
     }
 

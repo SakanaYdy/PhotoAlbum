@@ -52,8 +52,8 @@
             </template>
           </el-table-column>
             <el-table-column fixed="right" label="Operations" min-width="120">
-            <template #default>
-                <el-button link type="primary" size="small" @click="handleClick">
+            <template #default="scope">
+                <el-button link type="primary" size="small" @click="handleClick(scope.row.name)">
                 Detail
                 </el-button>
                 <el-button link type="primary" size="small">Edit</el-button>
@@ -88,7 +88,7 @@
             try {
                 const response = await axios.get('http://localhost:8085/admin/user'); // 向后端发送请求
                 if (response.data.code === 1) {
-                    this.users = response.data.data; // 更新相册数据
+                    this.users = response.data.data; 
                 } else {
                 this.$message.error(`获取用户列表失败: ${response.data.msg}`);
                 }
@@ -96,6 +96,21 @@
                 console.error(error);
                 this.$message.error('获取用户列表失败');
             }
+        },
+        handleClick(username) {
+          axios.post('http://localhost:8085/admin/changeUser',null, { 
+            params:{ username: username }  
+          })
+            .then(response => {
+              console.log('修改成功:', response.data);
+              // 刷新label
+              this.fetchUsers();
+              // 根据响应数据处理成功后的逻辑，比如显示提示信息
+            })
+            .catch(error => {
+              console.error('修改失败:', error);
+              // 处理错误，比如显示错误提示
+            });
         },
 
         goToManageAlbum(){
